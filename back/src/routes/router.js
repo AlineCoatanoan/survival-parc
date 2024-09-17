@@ -12,9 +12,9 @@ router.get("/", (req, res) => {
   res.send("Hello putain de Survival World");
 });
 
-router.use("/api", authRouter);
-router.use("/api", userRouter);
-router.use("/api", reservationRouter);
-router.use("/api", profileRouter);
-router.use("/api", attractionRouter);
-router.use("/api", hotelRouter);
+router.use("/auth", authRouter);
+router.use("/user", userRouter);
+router.use("/reservation", reservationRouter);
+router.use("/profile", profileRouter);
+router.use("/attraction", attractionRouter);
+router.use("/hotel", hotelRouter);
