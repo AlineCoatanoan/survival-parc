@@ -1,11 +1,11 @@
-import 'dotenv/config'; // importe et configure automatiquement les variables d'environnement définies dans le fichier .env
-import express from 'express'; // permet de créer un serveur
-import cookieParser from 'cookie-parser'; // module permet de lire et de manipuler les cookies envoyés par les clients.
+import "dotenv/config"; // importe et configure automatiquement les variables d'environnement définies dans le fichier .env
+import express from "express"; // permet de créer un serveur
+import cookieParser from "cookie-parser"; // module permet de lire et de manipuler les cookies envoyés par les clients.
 // Il est utilisé pour gérer les sessions ou d'autres données stockées côté client.
-import cors from 'cors'; // permettre à ton serveur de gérer les requêtes provenant de domaines différents du sien -> FRONT
-import { router } from './src/routes/router.js'; // module router, qui contient les différentes routes (endpoints API)
+import cors from "cors"; // permettre à ton serveur de gérer les requêtes provenant de domaines différents du sien -> FRONT
+import { router } from "./src/routes/router.js"; // module router, qui contient les différentes routes (endpoints API)
 
-import { middleware404 } from './src/middlewares/middleware404.js';
+import { middleware404 } from "./middlewares/errorMiddleware.js";
 
 const app = express(); // Cette ligne crée une instance d'Express, app, qui va permettre de définir les routes, middlewares, etc.
 
@@ -17,12 +17,12 @@ app.use(cookieParser()); //active le middleware cookieParser pour analyser les c
 //Middlewares Cors
 //configure CORS pour autoriser les requêtes provenant de http://localhost:5173 (le front-end local)
 //L'option "credentials: true" permet d'envoyer des cookies ou d'autres informations d'authentification avec les requêtes CORS
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 // Router
-app.use('/api', router);
+app.use("/api", router);
 
-// middleware 404
+// Global error handler
 app.use(middleware404);
 
 // Démarrer le serveur
