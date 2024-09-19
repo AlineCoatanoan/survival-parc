@@ -1,2 +1,5 @@
-# Fichier .gitattributes
 * text=auto
+*.js eol=lf
+*.ts eol=lf
+*.json eol=lf
+*.md eol=lf

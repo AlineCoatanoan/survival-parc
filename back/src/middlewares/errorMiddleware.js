@@ -27,3 +27,12 @@ export const errorResponse = (
     error: error ? error.message : null,
   });
 };
+
+// error 400
+export const badRequestResponse = (res, message = "Bad request") => {
+  return res.status(400).json({
+    status: "error",
+    code: 400,
+    message: "email or password is incorrect",
+  });
+};
