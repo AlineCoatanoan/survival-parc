@@ -17,7 +17,28 @@ app.use(cookieParser()); //active le middleware cookieParser pour analyser les c
 //Middlewares Cors
 //configure CORS pour autoriser les requêtes provenant de http://localhost:5173 (le front-end local)
 //L'option "credentials: true" permet d'envoyer des cookies ou d'autres informations d'authentification avec les requêtes CORS
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// Middleware de session
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "votre_secret_ici",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: "lax", // ou 'strict', selon tes besoins
+    },
+  })
+);
 
 // Router
 app.use("/api", router);

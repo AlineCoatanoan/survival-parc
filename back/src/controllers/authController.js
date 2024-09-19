@@ -4,6 +4,8 @@ import { badRequestResponse } from "../middlewares/badRequestMiddleware.js";
 import { ctrlWrapper } from "../middlewares/ctrlWrapper.js";
 import { models } from "../models/index.js";
 import { generateToken } from "../../utils/jwt.js";
+import { setCookies, clearCookies } from "../../utils/cookieUtils.js"; // Chemin à adapter
+
 import bcrypt from "bcrypt"; // Assure-toi d'avoir installé bcrypt
 
 const { User } = models;
@@ -30,11 +32,14 @@ export const login = ctrlWrapper(async (req, res) => {
   }
 
   // Génère un token JWT pour l'utilisateur
-  const token = generateToken(user.id);
+  const token = generateToken(user); // Passer l'utilisateur complet
 
   // Sauvegarde le token dans la base de données pour l'utilisateur
   user.token = token;
   await user.save();
+
+  // Définir le cookie avec le token
+  setCookies(res, token);
 
   // Envoie une réponse avec succès
   successResponse(res, "Login successful", { user, token });
@@ -51,6 +56,9 @@ export const logout = ctrlWrapper(async (req, res) => {
   // Supprime le token de l'utilisateur pour déconnecter
   user.token = null;
   await user.save();
+
+  // Effacer le cookie
+  clearCookies(res);
 
   successResponse(res, "Logout successful");
 });
