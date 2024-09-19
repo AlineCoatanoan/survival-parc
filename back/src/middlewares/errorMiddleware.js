@@ -1,8 +1,8 @@
-// success
+// success 200
 export const successResponse = (res, message, data = null) => {
   return res.status(200).json({
     success: true,
-    message: "Success",
+    message: message || "Success",
     data,
   });
 };
@@ -23,7 +23,7 @@ export const errorResponse = (
 ) => {
   return res.status(500).json({
     success: false,
-    message: "Internal server error",
+    message: message || "Internal server error",
     error: error ? error.message : null,
   });
 };
@@ -31,8 +31,23 @@ export const errorResponse = (
 // error 400
 export const badRequestResponse = (res, message = "Bad request") => {
   return res.status(400).json({
-    status: "error",
-    code: 400,
-    message: "email or password is incorrect",
+    success: false,
+    message: message || "Bad request",
+  });
+};
+
+// error 401
+export const unauthorizedResponse = (res, message = "Unauthorized access") => {
+  return res.status(401).json({
+    success: false,
+    message: message || "Unauthorized access",
+  });
+};
+
+// error 403
+export const forbiddenResponse = (res, message = "Forbidden access") => {
+  return res.status(403).json({
+    success: false,
+    message: message || "Forbidden access",
   });
 };
