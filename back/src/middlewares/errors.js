@@ -7,14 +7,6 @@ export const successResponse = (res, message, data = null) => {
   });
 };
 
-// error 404
-export const middleware404 = (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Page not found",
-  });
-};
-
 // error 500
 export const errorResponse = (
   res,

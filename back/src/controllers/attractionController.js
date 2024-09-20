@@ -55,3 +55,18 @@ export const deleteAttraction = ctrlWrapper(async (req, res) => {
   await attraction.destroy();
   successResponse(res, "Attraction deleted successfully");
 });
+
+// search attraction
+export const searchAttraction = ctrlWrapper(async (req, res) => {
+  const { name } = req.query;
+
+  const attractions = await Attraction.findAll({
+    where: {
+      name: {
+        [Op.iLike]: `%${name}%`,
+      },
+    },
+    order: [["name", "ASC"]],
+  });
+  successResponse(res, "Attractions fetched successfully", attractions);
+});

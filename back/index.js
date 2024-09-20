@@ -1,22 +1,20 @@
-import "dotenv/config"; // importe et configure automatiquement les variables d'environnement définies dans le fichier .env
-import express from "express"; // permet de créer un serveur
-import cookieParser from "cookie-parser"; // module permet de lire et de manipuler les cookies envoyés par les clients.
-// Il est utilisé pour gérer les sessions ou d'autres données stockées côté client.
-import cors from "cors"; // permettre à ton serveur de gérer les requêtes provenant de domaines différents du sien -> FRONT
-import { router } from "./src/routes/router.js"; // module router, qui contient les différentes routes (endpoints API)
+import "dotenv/config";
+import express from "express";
+import session from "express-session";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import { router } from "./src/routes/router.js";
+import { errorResponse } from "./middlewares/errors.js"; // Pour les autres erreurs
+import { error404 } from "./middlewares/error404.js"; // Pour les erreurs 404
 
-import { middleware404 } from "./middlewares/errorMiddleware.js";
-
-const app = express(); // Cette ligne crée une instance d'Express, app, qui va permettre de définir les routes, middlewares, etc.
+const app = express();
 
 // Bodyparser
-app.use(express.json()); // middleware permet au serveur de traiter les données au format JSON envoyées par le client (ex:requête POST).
-app.use(express.urlencoded({ extended: true })); //middleware utilisé pour analyser les données encodées sous forme d'URL, souvent envoyées via les formulaires
-app.use(cookieParser()); //active le middleware cookieParser pour analyser les cookies des requêtes entrantes
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-//Middlewares Cors
-//configure CORS pour autoriser les requêtes provenant de http://localhost:5173 (le front-end local)
-//L'option "credentials: true" permet d'envoyer des cookies ou d'autres informations d'authentification avec les requêtes CORS
+// Middlewares Cors
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -35,7 +33,7 @@ app.use(
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      sameSite: "lax", // ou 'strict', selon tes besoins
+      sameSite: "lax",
     },
   })
 );
@@ -43,8 +41,11 @@ app.use(
 // Router
 app.use("/api", router);
 
-// Global error handler
-app.use(middleware404);
+// erreur 404
+app.use(error404);
+
+// erreurs globales
+app.use(errorResponse);
 
 // Démarrer le serveur
 const port = process.env.PORT || 3001;
