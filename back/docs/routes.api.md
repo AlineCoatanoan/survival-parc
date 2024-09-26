@@ -8,8 +8,8 @@
 
 ## Routes User
 
-| Méthode | Chemin            | Middleware        | Description             | Paramètres      |
-| ------- | ----------------- | ----------------- | ----------------------- | --------------- |
+| Méthode | Chemin           | Middleware        | Description             | Paramètres      |
+| ------- | ---------------- | ----------------- | ----------------------- | --------------- |
 | GET     | /api/user        | authenticateToken | Obtenir tous les users  | admin           |
 | GET     | /api/user/:id    | authenticateToken | Obtenir un user par ID  | admin           |
 | GET     | /api/user/search | authenticateToken | Obtenir un user par nom | ?name=... admin |

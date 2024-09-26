@@ -1,7 +1,7 @@
-import { successResponse } from "../middlewares/successMiddleware.js";
-import { notFoundResponse } from "../middlewares/notFoundMiddleware.js";
-import { badRequestResponse } from "../middlewares/badRequestMiddleware.js";
-import { ctrlWrapper } from "../middlewares/ctrlWrapper.js";
+import { successResponse } from "../middlewares/success.js";
+import { error404 } from "../middlewares/error404.js";
+import { badRequestResponse } from "../middlewares/errors.js";
+import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
 import { generateToken } from "../../utils/jwt.js";
 import { setCookies, clearCookies } from "../../utils/cookieUtils.js"; // Chemin à adapter
@@ -22,7 +22,7 @@ export const login = ctrlWrapper(async (req, res) => {
   // Recherche l'utilisateur par email
   const user = await User.findOne({ where: { email } });
   if (!user) {
-    return notFoundResponse(res, "User not found");
+    return error404(res, "User not found");
   }
 
   // Vérifie le mot de passe
@@ -51,7 +51,7 @@ export const logout = ctrlWrapper(async (req, res) => {
 
   // Recherche l'utilisateur par son ID
   const user = await User.findByPk(id);
-  if (!user) return notFoundResponse(res, "User not found");
+  if (!user) return error404(res, "User not found");
 
   // Supprime le token de l'utilisateur pour déconnecter
   user.token = null;

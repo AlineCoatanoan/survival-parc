@@ -1,6 +1,6 @@
-import { successResponse } from "../middlewares/successMiddleware.js";
-import { notFoundResponse } from "../middlewares/notFoundMiddleware.js";
-import { ctrlWrapper } from "../middlewares/ctrlWrapper.js";
+import { successResponse } from "../middlewares/success.js";
+import { error404 } from "../middlewares/error404.js";
+import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
 
 const { Attraction } = models;
@@ -14,7 +14,7 @@ export const getAllAttractions = ctrlWrapper(async (req, res) => {
 // get attraction by id
 export const getAttractionId = ctrlWrapper(async (req, res) => {
   const attraction = await Attraction.findByPk(req.params.id);
-  if (!attraction) return notFoundResponse(res, "Attraction not found");
+  if (!attraction) return error404(res, "Attraction not found");
 
   successResponse(res, "Attraction fetched successfully", attraction);
 });
@@ -36,7 +36,7 @@ export const updateAttraction = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
 
   const attraction = await Attraction.findByPk(id);
-  if (!attraction) return notFoundResponse(res, "Attraction not found");
+  if (!attraction) return error404(res, "Attraction not found");
 
   if (name) attraction.name = name;
   if (description) attraction.description = description;
@@ -50,7 +50,7 @@ export const updateAttraction = ctrlWrapper(async (req, res) => {
 export const deleteAttraction = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const attraction = await Attraction.findByPk(id);
-  if (!attraction) return notFoundResponse(res, "Attraction not found");
+  if (!attraction) return error404(res, "Attraction not found");
 
   await attraction.destroy();
   successResponse(res, "Attraction deleted successfully");

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as hotelController from "../controllers/hotelController.js";
-import { ctrlWrapper as cw } from "../utils/ctrlWrapper.js";
+import { ctrlWrapper as cw } from "../../utils/ctrlWrapper.js";
 
 export const router = Router();
 

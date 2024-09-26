@@ -1,6 +1,6 @@
-import { successResponse } from "../middlewares/successMiddleware.js";
-import { notFoundResponse } from "../middlewares/notFoundMiddleware.js";
-import { ctrlWrapper } from "../middlewares/ctrlWrapper.js";
+import { successResponse } from "../middlewares/success.js";
+import { error404 } from "../middlewares/error404.js";
+import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
 
 export const hotelController = {};
@@ -16,7 +16,7 @@ export const getAllHotels = ctrlWrapper(async (req, res) => {
 // get hotel by id
 export const getHotelId = ctrlWrapper(async (req, res) => {
   const hotel = await Hotel.findByPk(req.params.id);
-  if (!hotel) return notFoundResponse(res, "Hotel not found");
+  if (!hotel) return error404(res, "Hotel not found");
 
   successResponse(res, "Hotel fetched successfully", hotel);
 });
@@ -38,7 +38,7 @@ export const updateHotel = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
 
   const hotel = await Hotel.findByPk(id);
-  if (!hotel) return notFoundResponse(res, "Hotel not found");
+  if (!hotel) return error404(res, "Hotel not found");
 
   if (name) hotel.name = name;
   if (description) hotel.description = description;
@@ -52,7 +52,7 @@ export const updateHotel = ctrlWrapper(async (req, res) => {
 export const deleteHotel = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const hotel = await Hotel.findByPk(id);
-  if (!hotel) return notFoundResponse(res, "Hotel not found");
+  if (!hotel) return error404(res, "Hotel not found");
 
   await hotel.destroy();
   successResponse(res, "Hotel deleted successfully");

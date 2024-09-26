@@ -4,8 +4,13 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { router } from "./src/routes/router.js";
-import { errorResponse } from "./middlewares/errors.js"; // Pour les autres erreurs
-import { error404 } from "./middlewares/error404.js"; // Pour les erreurs 404
+import { error404 } from "./src/middlewares/error404.js";
+import {
+  errorResponse,
+  badRequestResponse,
+  unauthorizedResponse,
+  forbiddenResponse,
+} from "../back/src/middlewares/errors.js";
 
 const app = express();
 
@@ -45,7 +50,12 @@ app.use("/api", router);
 app.use(error404);
 
 // erreurs globales
-app.use(errorResponse);
+app.use(
+  errorResponse,
+  badRequestResponse,
+  unauthorizedResponse,
+  forbiddenResponse
+);
 
 // Démarrer le serveur
 const port = process.env.PORT || 3001;

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as userController from "../controllers/userController.js";
-import { ctrlWrapper as cw } from "../utils/ctrlWrapper.js";
+import { ctrlWrapper as cw } from "../../utils/ctrlWrapper.js";
 
 export const router = Router();
 
