@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import { Model, DataTypes } from "sequelize";
 
 export class Profile extends Model {
   static init(sequelize) {
@@ -12,8 +12,12 @@ export class Profile extends Model {
         },
         userId: {
           type: DataTypes.INTEGER,
-          unique: true,
           allowNull: false,
+          unique: true,
+          references: {
+            model: "users", // Référence à la table users
+            key: "id",
+          },
         },
         firstName: {
           type: DataTypes.STRING,
@@ -55,19 +59,13 @@ export class Profile extends Model {
         },
       },
       {
-        sequelize,
-        modelName: 'Profile',
-        tableName: 'profiles',
+        sequelize, // Utilisation de l'import
+        modelName: "profile", // Nom du modèle en minuscule
+        tableName: "profiles", // Nom de la table
         timestamps: true,
       }
     );
   }
-
-  static associate(models) {
-    this.belongsTo(models.User, {
-      foreignKey: 'userId',
-      onDelete: 'CASCADE',
-      as: 'user',
-    });
-  }
 }
+
+export default Profile; // Ajout d'un export par défaut

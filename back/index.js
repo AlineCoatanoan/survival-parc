@@ -1,4 +1,3 @@
-import "dotenv/config";
 import express from "express";
 import session from "express-session";
 import cookieParser from "cookie-parser";
@@ -10,7 +9,9 @@ import {
   badRequestResponse,
   unauthorizedResponse,
   forbiddenResponse,
-} from "../back/src/middlewares/errors.js";
+} from "./src/middlewares/errors.js";
+import dbClient from "./src/models/dbclient.js"; // Assurez-vous que le chemin est correct
+import associations from "./src/models/associations.js"; // Assurez-vous que le chemin est correct
 
 const app = express();
 
@@ -43,22 +44,38 @@ app.use(
   })
 );
 
-// Router
-app.use("/api", router);
+// Initialisation des modèles et des associations
+associations();
 
-// erreur 404
-app.use(error404);
+// Synchroniser la base de données avant de démarrer le serveur
+console.log("Synchronisation de la base de données...");
+dbClient
+  .sync({ alter: true }) // Changez à true pour forcer la recréation des tables
+  .then(() => {
+    console.log("Synchronisation réussie !");
+    // Router
+    app.use("/api", router);
 
-// erreurs globales
-app.use(
-  errorResponse,
-  badRequestResponse,
-  unauthorizedResponse,
-  forbiddenResponse
-);
+    // Erreur 404
+    app.use(error404);
 
-// Démarrer le serveur
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}/api`);
-});
+    // Erreurs globales
+    app.use(
+      errorResponse,
+      badRequestResponse,
+      unauthorizedResponse,
+      forbiddenResponse
+    );
+
+    // Démarrer le serveur
+    const port = process.env.PORT || 3001;
+    app.listen(port, () => {
+      console.log(`Server listening at http://localhost:${port}/api`);
+    });
+  })
+  .catch((err) => {
+    console.error(
+      "Erreur lors de la synchronisation de la base de données",
+      err
+    );
+  });

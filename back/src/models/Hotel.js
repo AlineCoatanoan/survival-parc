@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import { Model, DataTypes } from "sequelize";
 
 export class Hotel extends Model {
   static init(sequelize) {
@@ -6,9 +6,9 @@ export class Hotel extends Model {
       {
         id: {
           type: DataTypes.INTEGER,
-          allowNull: false,
-          autoIncrement: true,
           primaryKey: true,
+          autoIncrement: true,
+          allowNull: false,
         },
         name: {
           type: DataTypes.STRING,
@@ -18,7 +18,7 @@ export class Hotel extends Model {
           type: DataTypes.TEXT,
           allowNull: false,
         },
-        adress: {
+        address: {
           type: DataTypes.STRING,
           allowNull: false,
         },
@@ -26,24 +26,16 @@ export class Hotel extends Model {
           type: DataTypes.STRING,
           allowNull: false,
           validate: {
-            len: [5, 10],
+            len: [5, 10], // Longueur minimale et maximale
           },
         },
         city: {
           type: DataTypes.STRING,
           allowNull: false,
-          validate: {
-            len: [2, 30],
-          },
         },
         priceByNight: {
           type: DataTypes.DECIMAL(10, 2),
           allowNull: false,
-          validate: {
-            isNumeric: true,
-            min: 0,
-            max: 1000,
-          },
         },
         photo: {
           type: DataTypes.STRING,
@@ -52,17 +44,12 @@ export class Hotel extends Model {
       },
       {
         sequelize,
-        modelName: 'Hotel',
-        tableName: 'hotels',
+        modelName: "hotel",
+        tableName: "hotels",
         timestamps: true,
       }
     );
   }
-  static associate(models) {
-    this.hasMany(models.Reservation, {
-      foreignKey: 'reservationId',
-      as: 'reservations',
-      onDelete: 'CASCADE',
-    });
-  }
 }
+
+export default Hotel; // Export par défaut

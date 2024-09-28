@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import { Model, DataTypes } from "sequelize";
 
 export class User extends Model {
   static init(sequelize) {
@@ -10,45 +10,31 @@ export class User extends Model {
           autoIncrement: true,
           allowNull: false,
         },
-        mail: {
+        username: {
           type: DataTypes.STRING,
           allowNull: false,
-          unique: true,
-          validate: {
-            isEmail: true,
-          },
         },
         password: {
           type: DataTypes.STRING,
           allowNull: false,
-          validate: {
-            len: [12, 30],
-          },
-        },
-        role: {
-          type: DataTypes.ENUM('admin', 'user'),
-          allowNull: false,
         },
         profileId: {
           type: DataTypes.INTEGER,
-          allowNull: false,
-          unique: true,
+          references: {
+            model: "profiles", // Assurez-vous que la table 'profiles' existe
+            key: "id",
+          },
+          onDelete: "CASCADE",
         },
       },
       {
         sequelize,
-        modelName: 'User',
-        tableName: 'users',
+        modelName: "user",
+        tableName: "users",
         timestamps: true,
       }
     );
   }
-
-  static associate(models) {
-    this.belongsTo(models.Profile, {
-      foreignKey: 'profileId',
-      onDelete: 'CASCADE',
-      as: 'profile',
-    });
-  }
 }
+
+export default User; // Export par défaut

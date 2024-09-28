@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import { Model, DataTypes } from "sequelize";
 
 export class Attraction extends Model {
   static init(sequelize) {
@@ -6,9 +6,9 @@ export class Attraction extends Model {
       {
         id: {
           type: DataTypes.INTEGER,
-          allowNull: false,
-          autoIncrement: true,
           primaryKey: true,
+          autoIncrement: true,
+          allowNull: false,
         },
         name: {
           type: DataTypes.STRING,
@@ -29,10 +29,12 @@ export class Attraction extends Model {
       },
       {
         sequelize,
-        modelName: 'Attraction',
-        tableName: 'attractions',
+        modelName: "attraction",
+        tableName: "attractions",
         timestamps: true,
       }
     );
   }
 }
+
+export default Attraction; // Export par défaut

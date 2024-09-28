@@ -1,16 +1,12 @@
-import { sequelize } from '../models/index.js';
+import dbClient from "../models/dbclient.js"; // Chemin vers votre dbClient
 
-const createTables = async () => {
+(async () => {
   try {
-    console.log('🚀 Creating tables...');
-    await sequelize.sync({ force: true });
-    console.log('✅ Tables created');
+    await dbClient.sync({ alter: true }); // 'force: true' pour recréer les tables
+    console.log("Tables recréées avec succès !");
   } catch (error) {
-    console.error('❌ Error creating tables:', error);
+    console.error("Erreur lors de la création des tables :", error);
   } finally {
-    await sequelize.close();
-    console.log('👺 sequelize connection closed');
+    await dbClient.close(); // Ferme la connexion
   }
-};
-
-createTables();
+})();

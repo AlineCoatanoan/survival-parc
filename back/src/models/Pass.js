@@ -1,4 +1,4 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes } from "sequelize";
 
 export class Pass extends Model {
   static init(sequelize) {
@@ -18,24 +18,19 @@ export class Pass extends Model {
           type: DataTypes.TEXT,
           allowNull: false,
         },
-        Price: {
+        price: {
           type: DataTypes.DECIMAL(10, 2),
           allowNull: false,
         },
       },
       {
         sequelize,
-        modelName: 'Pass',
-        tableName: 'pass',
+        modelName: "pass", // Nom du modèle en minuscule
+        tableName: "passes", // Assurez-vous que le nom de la table est correct
         timestamps: true,
       }
     );
   }
-  static associate(models) {
-    this.hasMany(models.Reservation, {
-      foreignKey: 'reservationId',
-      as: 'reservations',
-      onDelete: 'CASCADE',
-    });
-  }
 }
+
+export default Pass; // Export par défaut

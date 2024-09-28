@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import { Model, DataTypes } from "sequelize";
 
 export class Reservation extends Model {
   static init(sequelize) {
@@ -36,29 +36,13 @@ export class Reservation extends Model {
         },
       },
       {
-        sequelize,
-        modelName: 'Reservation',
-        tableName: 'reservations',
+        sequelize, // Utilisation de l'import
+        modelName: "reservation", // Nom du modèle en minuscule
+        tableName: "reservations", // Nom de la table
         timestamps: true,
       }
     );
   }
-  static associate(models) {
-    this.belongsTo(models.Profile, {
-      foreignKey: 'profileId',
-      as: 'profile',
-    });
-
-    this.hasMany(models.Hotel, {
-      foreignKey: 'hotelId',
-      as: 'hotels',
-      onDelete: 'CASCADE',
-    });
-
-    this.hasMany(models.Pass, {
-      foreignKey: 'passId',
-      as: 'pass',
-      onDelete: 'CASCADE',
-    });
-  }
 }
+
+export default Reservation; // Ajout d'un export par défaut
