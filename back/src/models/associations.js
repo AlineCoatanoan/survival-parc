@@ -1,23 +1,32 @@
-import User from "./User.js";
-import Profile from "./Profile.js";
-import Hotel from "./Hotel.js";
-import Attraction from "./Attraction.js";
-import Reservation from "./Reservation.js";
+import { sequelize } from "./dbclient.js";
+import { User } from "./User.js";
+import { Profile } from "./Profile.js";
+import { Reservation } from "./Reservation.js";
+import { Pass } from "./Pass.js";
+import { Hotel } from "./Hotel.js";
+import { Attraction } from "./Attraction.js";
 
-const associations = () => {
-  // Associations entre User et Profile
+// Initialisation des modèles et associations
+export const initializeModels = () => {
+  const models = {
+    User: User.init(sequelize),
+    Profile: Profile.init(sequelize),
+    Reservation: Reservation.init(sequelize),
+    Pass: Pass.init(sequelize),
+    Hotel: Hotel.init(sequelize),
+    Attraction: Attraction.init(sequelize),
+  };
+
+  // Associations entre les modèles
   User.hasOne(Profile, { foreignKey: "userId", sourceKey: "id" });
   Profile.belongsTo(User, { foreignKey: "userId", targetKey: "id" });
 
-  // Associations entre User et Reservation
   User.hasMany(Reservation, { foreignKey: "userId", sourceKey: "id" });
   Reservation.belongsTo(User, { foreignKey: "userId", targetKey: "id" });
 
-  // Associations entre Hotel et Reservation
   Hotel.hasMany(Reservation, { foreignKey: "hotelId", sourceKey: "id" });
   Reservation.belongsTo(Hotel, { foreignKey: "hotelId", targetKey: "id" });
 
-  // Associations entre Attraction et Reservation
   Attraction.hasMany(Reservation, {
     foreignKey: "attractionId",
     sourceKey: "id",
@@ -26,6 +35,6 @@ const associations = () => {
     foreignKey: "attractionId",
     targetKey: "id",
   });
-};
 
-export default associations;
+  return models; // Retourner les modèles initialisés
+};

@@ -7,19 +7,16 @@ import { seedReservation } from "./seeding/seedReservation.js";
 import { seedUser } from "./seeding/seedUser.js";
 
 const populateTable = async () => {
-  const transaction = await sequelize.transaction();
   try {
     console.log("🚀 Populating tables...");
-    await seedUser({ transaction }); // 1. Insérer utilisateurs
-    await seedProfile({ transaction }); // 2. Insérer profils qui dépendent des utilisateurs
-    await seedHotel({ transaction }); // 3. Insérer hôtels
-    await seedPass({ transaction }); // 4. Insérer pass
-    await seedReservation({ transaction }); // 5. Insérer réservations qui dépendent des profils, hôtels et pass
-    await seedAttraction({ transaction }); // 6. Insérer attractions (indépendant)
-    await transaction.commit();
+    await seedUser(); // 1. Insérer utilisateurs
+    await seedProfile(); // 2. Insérer profils qui dépendent des utilisateurs
+    await seedHotel(); // 3. Insérer hôtels
+    await seedPass(); // 4. Insérer pass
+    await seedReservation(); // 5. Insérer réservations qui dépendent des profils, hôtels et pass
+    await seedAttraction(); // 6. Insérer attractions (indépendant)
     console.log("✅ Tables populated successfully!");
   } catch (error) {
-    await transaction.rollback();
     console.error("❌ Error populating tables:", error);
   } finally {
     await sequelize.close();

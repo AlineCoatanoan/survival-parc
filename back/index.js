@@ -10,10 +10,16 @@ import {
   unauthorizedResponse,
   forbiddenResponse,
 } from "./src/middlewares/errors.js";
-import dbClient from "./src/models/dbclient.js"; // Assurez-vous que le chemin est correct
-import associations from "./src/models/associations.js"; // Assurez-vous que le chemin est correct
+import { sequelize } from "./src/models/dbclient.js"; // Assurez-vous que le chemin est correct
+import { initializeModels } from "./src/models/associations.js"; // Assurez-vous que le chemin est correct
 
 const app = express();
+
+// Middleware de logging
+app.use((req, res, next) => {
+  console.log(`Requested URL: ${req.originalUrl}`); // Log l'URL demandée
+  next(); // Passer au middleware suivant
+});
 
 // Bodyparser
 app.use(express.json());
@@ -45,14 +51,16 @@ app.use(
 );
 
 // Initialisation des modèles et des associations
-associations();
+initializeModels();
 
-// Synchroniser la base de données avant de démarrer le serveur
-console.log("Synchronisation de la base de données...");
-dbClient
-  .sync({ alter: true }) // Changez à true pour forcer la recréation des tables
+// Vérification de la connexion à la base de données
+sequelize
+  .authenticate()
   .then(() => {
-    console.log("Synchronisation réussie !");
+    console.log(
+      "✅ Connection to the database has been established successfully."
+    );
+
     // Router
     app.use("/api", router);
 
@@ -68,14 +76,11 @@ dbClient
     );
 
     // Démarrer le serveur
-    const port = process.env.PORT || 3001;
+    const port = process.env.PORT || 3000;
     app.listen(port, () => {
       console.log(`Server listening at http://localhost:${port}/api`);
     });
   })
-  .catch((err) => {
-    console.error(
-      "Erreur lors de la synchronisation de la base de données",
-      err
-    );
+  .catch((error) => {
+    console.error("❌ Unable to connect to the database:", error);
   });

@@ -36,5 +36,3 @@ export class Attraction extends Model {
     );
   }
 }
-
-export default Attraction; // Export par défaut

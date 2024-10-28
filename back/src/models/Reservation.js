@@ -34,15 +34,37 @@ export class Reservation extends Model {
           type: DataTypes.DECIMAL(10, 2),
           allowNull: false,
         },
+        profileId: {
+          type: DataTypes.INTEGER,
+          references: {
+            model: "profiles",
+            key: "id",
+          },
+          onDelete: "CASCADE",
+        },
+        hotelId: {
+          type: DataTypes.INTEGER,
+          references: {
+            model: "hotels", // Assurez-vous que la table 'hotels' existe
+            key: "id",
+          },
+          onDelete: "CASCADE",
+        },
+        passId: {
+          type: DataTypes.INTEGER,
+          references: {
+            model: "passes", // Assurez-vous que la table 'passes' existe
+            key: "id",
+          },
+          onDelete: "CASCADE",
+        },
       },
       {
-        sequelize, // Utilisation de l'import
-        modelName: "reservation", // Nom du modèle en minuscule
-        tableName: "reservations", // Nom de la table
+        sequelize,
+        modelName: "reservation",
+        tableName: "reservations",
         timestamps: true,
       }
     );
   }
 }
-
-export default Reservation; // Ajout d'un export par défaut

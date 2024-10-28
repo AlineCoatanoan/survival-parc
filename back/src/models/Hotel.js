@@ -51,5 +51,3 @@ export class Hotel extends Model {
     );
   }
 }
-
-export default Hotel; // Export par défaut

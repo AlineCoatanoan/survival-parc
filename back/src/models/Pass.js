@@ -32,5 +32,3 @@ export class Pass extends Model {
     );
   }
 }
-
-export default Pass; // Export par défaut

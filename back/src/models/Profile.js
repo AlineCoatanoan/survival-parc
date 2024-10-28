@@ -15,7 +15,7 @@ export class Profile extends Model {
           allowNull: false,
           unique: true,
           references: {
-            model: "users", // Référence à la table users
+            model: "users",
             key: "id",
           },
         },
@@ -59,13 +59,11 @@ export class Profile extends Model {
         },
       },
       {
-        sequelize, // Utilisation de l'import
-        modelName: "profile", // Nom du modèle en minuscule
-        tableName: "profiles", // Nom de la table
+        sequelize,
+        modelName: "profile",
+        tableName: "profiles",
         timestamps: true,
       }
     );
   }
 }
-
-export default Profile; // Ajout d'un export par défaut

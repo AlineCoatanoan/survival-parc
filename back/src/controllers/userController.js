@@ -2,18 +2,39 @@ import { successResponse } from "../middlewares/success.js";
 import { error404 } from "../middlewares/error404.js";
 import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
+import { Op } from "sequelize";
 
 const { User } = models;
 
 // get all users
 export const getAllUsers = ctrlWrapper(async (req, res) => {
-  const users = await User.findAll();
+  const users = await User.findAll({
+    attributes: [
+      "id",
+      "firstName",
+      "lastName",
+      "email",
+      "role",
+      "createdAt",
+      "updatedAt",
+    ], // Spécifiez les attributs à récupérer
+  });
   successResponse(res, "Users fetched successfully", users);
 });
 
 // get user by id
 export const getUserId = ctrlWrapper(async (req, res) => {
-  const user = await User.findByPk(req.params.id);
+  const user = await User.findByPk(req.params.id, {
+    attributes: [
+      "id",
+      "firstName",
+      "lastName",
+      "email",
+      "role",
+      "createdAt",
+      "updatedAt",
+    ],
+  });
   if (!user) return error404(res, "User not found");
 
   successResponse(res, "User fetched successfully", user);
@@ -21,15 +42,29 @@ export const getUserId = ctrlWrapper(async (req, res) => {
 
 // create user
 export const createUser = ctrlWrapper(async (req, res) => {
-  const { firstName, lastName, email, password, role } = req.body;
-  const user = await User.create({
-    firstName,
-    lastName,
-    email,
-    password,
-    role,
-  });
-  successResponse(res, "User created successfully", user);
+  const { firstName, lastName, email, password, role } = req.body; // Récupération des données
+
+  try {
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      password,
+      role,
+    });
+    successResponse(res, "User created successfully", {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ message: "Error creating user", error });
+  }
 });
 
 // update user
@@ -47,7 +82,15 @@ export const updateUser = ctrlWrapper(async (req, res) => {
   if (role) user.role = role;
 
   await user.save();
-  successResponse(res, "User updated successfully", user);
+  successResponse(res, "User updated successfully", {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    role: user.role,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  });
 });
 
 // delete user
@@ -66,11 +109,22 @@ export const searchUser = ctrlWrapper(async (req, res) => {
 
   const users = await User.findAll({
     where: {
-      name: {
-        [Op.iLike]: `%${name}%`,
-      },
+      [Op.or]: [
+        { firstName: { [Op.iLike]: `%${name}%` } },
+        { lastName: { [Op.iLike]: `%${name}%` } },
+        { email: { [Op.iLike]: `%${name}%` } },
+      ],
     },
-    order: [["name", "ASC"]],
+    attributes: [
+      "id",
+      "firstName",
+      "lastName",
+      "email",
+      "role",
+      "createdAt",
+      "updatedAt",
+    ],
+    order: [["firstName", "ASC"]],
   });
   successResponse(res, "Users fetched successfully", users);
 });

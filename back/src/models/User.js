@@ -6,35 +6,38 @@ export class User extends Model {
       {
         id: {
           type: DataTypes.INTEGER,
-          primaryKey: true,
+          allowNull: false,
           autoIncrement: true,
-          allowNull: false,
+          primaryKey: true,
         },
-        username: {
+        firstName: {
           type: DataTypes.STRING,
-          allowNull: false,
+          allowNull: false, // Champ requis
+        },
+        lastName: {
+          type: DataTypes.STRING,
+          allowNull: false, // Champ requis
+        },
+        email: {
+          type: DataTypes.STRING,
+          allowNull: false, // Champ requis
+          unique: true, // Doit être unique
         },
         password: {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        profileId: {
-          type: DataTypes.INTEGER,
-          references: {
-            model: "profiles", // Assurez-vous que la table 'profiles' existe
-            key: "id",
-          },
-          onDelete: "CASCADE",
+        role: {
+          type: DataTypes.STRING,
+          allowNull: false, // Champ requis
         },
       },
       {
         sequelize,
         modelName: "user",
         tableName: "users",
-        timestamps: true,
+        timestamps: true, // Pour créer createdAt et updatedAt
       }
     );
   }
 }
-
-export default User; // Export par défaut

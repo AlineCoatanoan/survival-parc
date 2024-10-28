@@ -5,6 +5,22 @@ import { models } from "../models/index.js";
 
 const { Profile } = models;
 
+// get all profiles
+export const getProfiles = ctrlWrapper(async (req, res) => {
+  const profiles = await Profile.findAll();
+  if (!profiles) return error404(res, "Profiles not found");
+  successResponse(res, "Profiles retrieved successfully", profiles);
+});
+
+// get profile by ID (si vous souhaitez récupérer un profil spécifique)
+export const getProfileById = ctrlWrapper(async (req, res) => {
+  const { id } = req.params;
+  const profile = await Profile.findByPk(id);
+  if (!profile) return error404(res, "Profile not found");
+
+  successResponse(res, "Profile retrieved successfully", profile);
+});
+
 // create profile
 export const createProfile = ctrlWrapper(async (req, res) => {
   const { firstName, lastName, email, phoneNumber, address } = req.body;
