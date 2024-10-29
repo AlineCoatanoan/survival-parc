@@ -1,10 +1,10 @@
 import { sequelize } from "./dbclient.js";
-import { User } from "./User.js";
-import { Profile } from "./Profile.js";
-import { Reservation } from "./Reservation.js";
-import { Pass } from "./Pass.js";
-import { Hotel } from "./Hotel.js";
-import { Attraction } from "./Attraction.js";
+import { User } from "../models/User.js";
+import { Profile } from "../models/Profile.js";
+import { Reservation } from "../models/Reservation.js";
+import { Pass } from "../models/Pass.js";
+import { Hotel } from "../models/Hotel.js";
+import { Attraction } from "../models/Attraction.js";
 
 // Initialisation des modèles et associations
 export const initializeModels = () => {

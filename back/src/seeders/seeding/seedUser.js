@@ -6,11 +6,13 @@ export const seedUser = async () => {
   // Utilisateurs avec tous les champs requis
   const users = [
     {
+      id: 1,
       email: "aline.coding@example.com",
       password: "aline123Password!",
       role: "admin",
     },
     {
+      id: 2,
       email: "alex.legrand@example.com",
       password: "alexPassword123!",
       role: "user",

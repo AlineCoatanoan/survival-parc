@@ -1,4 +1,4 @@
-import { sequelize } from "../models/dbclient.js";
+import { sequelize } from "../config/dbclient.js";
 import { seedAttraction } from "./seeding/seedAttraction.js";
 import { seedHotel } from "./seeding/seedHotel.js";
 import { seedPass } from "./seeding/seedPass.js";

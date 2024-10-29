@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "dev": "nodemon index.js",
-    "db:reset": "node src/seeders/createTable.js",
+    "db:reset": "node src/seeders/resetDatabase.js",
+    "db:create": "node src/seeders/createTable.js",
     "db:seed": "node src/seeders/populateTable.js",
     "test": "jest "
   },

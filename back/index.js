@@ -10,8 +10,8 @@ import {
   unauthorizedResponse,
   forbiddenResponse,
 } from "./src/middlewares/errors.js";
-import { sequelize } from "./src/models/dbclient.js"; // Assurez-vous que le chemin est correct
-import { initializeModels } from "./src/models/associations.js"; // Assurez-vous que le chemin est correct
+import { sequelize } from "../back/src/config/dbclient.js"; // Assurez-vous que le chemin est correct
+import { initializeModels } from "../back/src/config/associations.js"; // Assurez-vous que le chemin est correct
 
 const app = express();
 
