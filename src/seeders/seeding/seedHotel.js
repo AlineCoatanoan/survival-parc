@@ -21,7 +21,6 @@ export const seedHotel = async () => {
       postalCode: "75001",
       city: "Paris",
       priceByNight: 30,
-      photo: null,
     },
     {
       name: "Hotel de l'avant-poste",
@@ -31,7 +30,6 @@ export const seedHotel = async () => {
       postalCode: "75001",
       city: "Paris",
       priceByNight: 50,
-      photo: null,
     },
   ];
 

@@ -16,5 +16,6 @@ router.use("/auth", authRouter);
 router.use("/user", userRouter);
 router.use("/reservation", reservationRouter);
 router.use("/profile", profileRouter);
-router.use("/animation", animationRouter);
+router.use("/animations", animationRouter);
+router.use("/animations/:type", animationRouter);
 router.use("/hotel", hotelRouter);

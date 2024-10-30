@@ -8,28 +8,29 @@ export const seedAnimation = async () => {
       name: "La Montée du Chaos",
       description: "Le grand 8",
       type: "animation",
-      photo: null,
+    },
+    {
+      name: "Le train-Zombie",
+      description: "Un train qui se déplace dans une zone infectée du parc",
+      type: "animation",
     },
     {
       name: "Le passage secret",
       description:
         "Un labyrinthe sombre où les visiteurs doivent utiliser des indices pour trouver leur chemin tout en évitant des obstacles et des créatures dangereuses.",
-      type: "animation",
-      photo: null,
+      type: "labyrinthe",
     },
     {
       name: "Le laboratoire",
       description:
         "Escape Game où il faudra trouver un vaccin avant que le virus ne se propage.",
-      type: "animation",
-      photo: null,
+      type: "escapeGame",
     },
     {
       name: "L'immersif 360°",
       description:
         "Cinéma 4DX avec des écrans du sol au plafond pour une immersion totale",
-      type: "animation",
-      photo: null,
+      type: "cinema",
     },
   ];
   for (const animation of animations) {

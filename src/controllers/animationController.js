@@ -2,6 +2,7 @@ import { successResponse } from "../middlewares/success.js";
 import { error404 } from "../middlewares/error404.js";
 import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
+import { Op } from "sequelize";
 
 const { Animation } = models;
 
@@ -17,6 +18,17 @@ export const getAnimationId = ctrlWrapper(async (req, res) => {
   if (!animation) return error404(res, "Animation not found");
 
   successResponse(res, "Animation fetched successfully", animation);
+});
+
+// get animations by type
+export const getAnimationsByType = ctrlWrapper(async (req, res) => {
+  const { type } = req.params;
+
+  const animations = await Animation.findAll({ where: { type } });
+  if (animations.length === 0)
+    return error404(res, "No animations found for this type");
+
+  successResponse(res, "Animations fetched successfully", animations);
 });
 
 // create animation

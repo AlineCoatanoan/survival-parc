@@ -22,10 +22,6 @@ export class Animation extends Model {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        photo: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
       },
       {
         sequelize,
