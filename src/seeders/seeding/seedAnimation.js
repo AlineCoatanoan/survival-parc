@@ -7,12 +7,12 @@ export const seedAnimation = async () => {
     {
       name: "La Montée du Chaos",
       description: "Le grand 8",
-      type: "animation",
+      type: "attraction",
     },
     {
       name: "Le train-Zombie",
       description: "Un train qui se déplace dans une zone infectée du parc",
-      type: "animation",
+      type: "attraction",
     },
     {
       name: "Le passage secret",
