@@ -3,6 +3,7 @@ import { error404 } from "../middlewares/error404.js";
 import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
 import { Op } from "sequelize";
+import bcrypt from "bcrypt";
 
 const { User } = models;
 
@@ -29,11 +30,15 @@ export const createUser = ctrlWrapper(async (req, res) => {
   const { firstName, lastName, email, password, role } = req.body; // Récupération des données
 
   try {
+    // Hachage du mot de passe avec un salt de 10
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await User.create({
       email,
-      password,
+      password: hashedPassword, // Utiliser le mot de passe haché
       role,
     });
+
     successResponse(res, "User created successfully", {
       id: user.id,
       email: user.email,
@@ -42,7 +47,7 @@ export const createUser = ctrlWrapper(async (req, res) => {
       updatedAt: user.updatedAt,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error creating user:", error);
     return res.status(400).json({ message: "Error creating user", error });
   }
 });

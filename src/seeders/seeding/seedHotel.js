@@ -5,9 +5,9 @@ const { Hotel } = models;
 export const seedHotel = async () => {
   const hotels = [
     {
-      name: "Hotel le bunker",
+      name: "Hotel post-apocalyptique",
       description:
-        "Cet hôtel souterrain offre une expérience de survie réaliste avec des chambres aménagées dans un ancien bunker. Les visiteurs y trouveront un refuge sécurisé, avec des portes blindées et une ambiance post-apocalyptique, tout en bénéficiant de tout le confort moderne.",
+        "Découvrez l'Hôtel Post-Apocalyptique, un havre de paix en dehors des zones de quarantaine, où le confort rencontre l'aventure. Inspiré par un monde de survie, cet hôtel offre une atmosphère intrigante avec des chambres décorées de façon industrielle et des touches naturelles. Détendez-vous dans un cadre sécurisé tout en explorant les histoires de résilience qui vous entourent. Avec un restaurant servant des plats inspirés des ressources locales et des activités immersives, cet hôtel est le lieu idéal pour recharger vos batteries après une journée d'exploration du Survival-Parc.",
       address: "12 rue de la gare", // Correction ici
       postalCode: "75001",
       city: "Paris",
@@ -16,20 +16,11 @@ export const seedHotel = async () => {
     {
       name: "Hotel le refuge des survivants",
       description:
-        "Situé en bordure de la zone de quarantaine, cet hôtel a été conçu comme un camp de réfugiés. Les chambres ressemblent à des cabines renforcées, et les visiteurs peuvent profiter d’espaces communs où des 'rations' sont servies dans une ambiance de camp de survie.",
+        "Plongez dans l'univers captivant du Survival-Parc à l'Hôtel Zone Sécurisée, conçu pour offrir une refuge en pleine ambiance de quarantaine. Encadré par des murs de béton et des systèmes de sécurité avancés, cet hôtel garantit une expérience immersive tout en préservant votre confort. Chaque chambre, stylisée avec des éléments de sécurité inspirés de l'univers de la survie, offre un espace rassurant pour se reposer après vos aventures. Profitez d'une restauration adaptée à l'environnement et de services de sécurité pour une tranquillité d'esprit totale, le tout au cœur de la tension et de l'excitation d'une zone sous contrôle.",
       address: "12 rue de la gare", // Correction ici
       postalCode: "75001",
       city: "Paris",
       priceByNight: 30,
-    },
-    {
-      name: "Hotel de l'avant-poste",
-      description:
-        "Cet hôtel est conçu comme un avant-poste militaire en zone de crise. Les chambres sont aménagées pour ressembler à des unités de commandement, avec des équipements de survie intégrés et des décors inspirés des bases militaires. Les visiteurs peuvent également profiter de zones de détente avec des thèmes de stratégie et de sécurité.",
-      address: "12 rue de la gare", // Correction ici
-      postalCode: "75001",
-      city: "Paris",
-      priceByNight: 50,
     },
   ];
 

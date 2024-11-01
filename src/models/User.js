@@ -20,8 +20,9 @@ export class User extends Model {
           allowNull: false,
         },
         role: {
-          type: DataTypes.STRING,
-          allowNull: false, // Champ requis
+          type: DataTypes.ENUM("admin", "user"), // Enum pour le rôle
+          defaultValue: "user", // Rôle par défaut
+          allowNull: false,
         },
       },
       {
