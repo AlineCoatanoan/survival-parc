@@ -5,7 +5,6 @@ import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
 import { generateToken } from "../../utils/jwt.js";
 import { setCookies, clearCookies } from "../../utils/cookieUtils.js"; // Chemin à adapter
-
 import bcrypt from "bcrypt"; // Assure-toi d'avoir installé bcrypt
 
 const { User } = models;

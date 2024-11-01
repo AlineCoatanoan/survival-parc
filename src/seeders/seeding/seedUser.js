@@ -7,12 +7,16 @@ export const seedUser = async () => {
   const users = [
     {
       id: 1,
+      firstName: "Aline",
+      lastName: "Coding",
       email: "aline.coding@example.com",
       password: "aline123Password!",
       role: "admin",
     },
     {
       id: 2,
+      firstName: "Alex",
+      lastName: "Legrand",
       email: "alex.legrand@example.com",
       password: "alexPassword123!",
       role: "user",

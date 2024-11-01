@@ -34,6 +34,8 @@ export const createUser = ctrlWrapper(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
+      firstName,
+      lastName,
       email,
       password: hashedPassword, // Utiliser le mot de passe haché
       role,

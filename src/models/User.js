@@ -10,6 +10,20 @@ export class User extends Model {
           autoIncrement: true,
           primaryKey: true,
         },
+        firstName: {
+          type: DataTypes.STRING,
+          allowNull: false, // Champ requis
+          validate: {
+            len: [2, 30], // Validation de longueur
+          },
+        },
+        lastName: {
+          type: DataTypes.STRING,
+          allowNull: false, // Champ requis
+          validate: {
+            len: [2, 30], // Validation de longueur
+          },
+        },
         email: {
           type: DataTypes.STRING,
           allowNull: false, // Champ requis
