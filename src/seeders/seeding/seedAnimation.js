@@ -15,6 +15,12 @@ export const seedAnimation = async () => {
       type: "attraction",
     },
     {
+      name: "De nombreuses attractions",
+      description:
+        "Découvrez des manèges palpitants, défiant vos sens et testant votre bravoure dans un univers captivant.",
+      type: "attraction",
+    },
+    {
       name: "Le passage secret",
       description:
         "Un labyrinthe sombre où les visiteurs doivent utiliser des indices pour trouver leur chemin tout en évitant des obstacles et des créatures dangereuses.",
