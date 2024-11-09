@@ -33,18 +33,25 @@ export const getAnimationsByType = ctrlWrapper(async (req, res) => {
 
 // create animation
 export const createAnimation = ctrlWrapper(async (req, res) => {
-  const { name, description, categoryId } = req.body;
+  const { name, description, type } = req.body; // Remplacement de categoryId par type
+  if (!name || !description || !type) {
+    return res.status(400).json({
+      success: false,
+      message: 'Les champs "name", "description" et "type" sont requis.',
+    });
+  }
+
   const animation = await Animation.create({
     name,
     description,
-    categoryId,
+    type, // Remplacement de categoryId par type
   });
   successResponse(res, "Animation created successfully", animation);
 });
 
 // update animation
 export const updateAnimation = ctrlWrapper(async (req, res) => {
-  const { name, description, categoryId } = req.body;
+  const { name, description, type } = req.body; // Remplacement de categoryId par type
   const { id } = req.params;
 
   const animation = await Animation.findByPk(id);
@@ -52,7 +59,7 @@ export const updateAnimation = ctrlWrapper(async (req, res) => {
 
   if (name) animation.name = name;
   if (description) animation.description = description;
-  if (categoryId) animation.categoryId = categoryId;
+  if (type) animation.type = type; // Remplacement de categoryId par type
 
   await animation.save();
   successResponse(res, "Animation updated successfully", animation);

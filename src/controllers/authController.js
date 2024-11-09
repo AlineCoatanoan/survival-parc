@@ -30,6 +30,13 @@ export const login = ctrlWrapper(async (req, res) => {
     return badRequestResponse(res, "Wrong password");
   }
 
+  // Vérification du rôle de l'utilisateur
+  if (user.role === "admin") {
+    console.log("Admin logged in: ", user.id);
+  } else {
+    console.log("User logged in: ", user.id);
+  }
+
   // Génère un token JWT pour l'utilisateur
   const token = generateToken(user); // Passer l'utilisateur complet
 
