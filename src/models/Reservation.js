@@ -12,7 +12,7 @@ export class Reservation extends Model {
         },
         description: {
           type: DataTypes.TEXT,
-          allowNull: false,
+          allowNull: true,
         },
         startDate: {
           type: DataTypes.DATE,
@@ -24,7 +24,7 @@ export class Reservation extends Model {
         },
         nights: {
           type: DataTypes.INTEGER,
-          allowNull: false,
+          allowNull: true,
         },
         person: {
           type: DataTypes.INTEGER,

@@ -11,55 +11,90 @@ export const getAllReservations = ctrlWrapper(async (req, res) => {
   successResponse(res, "Reservations fetched successfully", reservations);
 });
 
-// get reservation by id
-export const getReservationId = ctrlWrapper(async (req, res) => {
-  const reservation = await Reservation.findByPk(req.params.id);
-  if (!reservation) return error404(res, "Reservation not found");
+// get reservation by user ID
+export const getReservationsByUser = ctrlWrapper(async (req, res) => {
+  const userId = req.params.id;
+  const reservations = await Reservation.findAll({ where: { userId } });
 
-  successResponse(res, "Reservation fetched successfully", reservation);
+  if (!reservations || reservations.length === 0) {
+    return error404(res, "Aucune réservation trouvée pour cet utilisateur.");
+  }
+
+  successResponse(res, "Réservations récupérées avec succès", reservations);
 });
 
-// create reservation
+// create reservation (linked to userId)
 export const createReservation = ctrlWrapper(async (req, res) => {
-  const { name, description, categoryId } = req.body;
-  const reservation = await Reservation.create({
-    name,
-    description,
-    categoryId,
-  });
-  successResponse(res, "Reservation created successfully", reservation);
+  const { startDate, endDate, nights, person, price, userId } = req.body;
+
+  // Vérification des champs requis
+  if (!startDate || !endDate || !person || !price || !userId) {
+    return res
+      .status(400)
+      .json({ message: "Les informations nécessaires sont manquantes." });
+  }
+
+  // Si 'nights' est omis ou égal à 0, calculez-le
+  const calculatedNights =
+    nights > 0 ? nights : calculateNights(startDate, endDate);
+
+  try {
+    const reservation = await Reservation.create({
+      startDate,
+      endDate,
+      nights: calculatedNights,
+      person,
+      price,
+      userId,
+    });
+
+    successResponse(res, "Réservation créée avec succès", reservation);
+  } catch (err) {
+    console.error("Erreur lors de la création de la réservation:", err); // Log détaillé de l'erreur
+
+    // Affichage de l'erreur complète dans la réponse
+    return res.status(500).json({
+      message: "Erreur interne du serveur.",
+      error: err.message, // Détails de l'erreur
+      stack: err.stack, // Stack trace pour aider à comprendre le problème
+    });
+  }
 });
 
-// update reservation
+// update reservation (only if it belongs to userId)
 export const updateReservation = ctrlWrapper(async (req, res) => {
-  const { name, description, categoryId } = req.body;
   const { id } = req.params;
+  const { startDate, endDate, person, price, userId } = req.body;
 
-  const reservation = await Reservation.findByPk(id);
-  if (!reservation) return error404(res, "Reservation not found");
+  const reservation = await Reservation.findOne({ where: { id, userId } });
+  if (!reservation)
+    return error404(res, "Réservation non trouvée ou non autorisée.");
 
-  if (name) reservation.name = name;
-  if (description) reservation.description = description;
-  if (categoryId) reservation.categoryId = categoryId;
+  if (startDate) reservation.startDate = startDate;
+  if (endDate) reservation.endDate = endDate;
+  if (person) reservation.person = person;
+  if (price) reservation.price = price;
 
   await reservation.save();
-  successResponse(res, "Reservation updated successfully", reservation);
+  successResponse(res, "Réservation mise à jour avec succès", reservation);
 });
 
-// delete reservation
+// delete reservation (only if it belongs to userId)
 export const deleteReservation = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
-  const reservation = await Reservation.findByPk(id);
-  if (!reservation) return error404(res, "Reservation not found");
+  const { userId } = req.body;
+
+  const reservation = await Reservation.findOne({ where: { id, userId } });
+  if (!reservation)
+    return error404(res, "Réservation non trouvée ou non autorisée.");
 
   await reservation.destroy();
-  successResponse(res, "Reservation deleted successfully");
+  successResponse(res, "Réservation supprimée avec succès");
 });
 
-// search reservation
+// search reservation by name
 export const searchReservation = ctrlWrapper(async (req, res) => {
   const { name } = req.query;
-
   const reservations = await Reservation.findAll({
     where: {
       name: {
@@ -68,5 +103,12 @@ export const searchReservation = ctrlWrapper(async (req, res) => {
     },
     order: [["name", "ASC"]],
   });
-  successResponse(res, "Reservations fetched successfully", reservations);
+  successResponse(res, "Réservations récupérées avec succès", reservations);
 });
+
+// Helper function to calculate nights if not provided
+function calculateNights(startDate, endDate) {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  return Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+}

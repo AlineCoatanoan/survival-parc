@@ -15,11 +15,6 @@ export const seedPass = async () => {
       description: "pass pour 2 jours",
       price: 30, // Changer basePrice en price
     },
-    {
-      name: "Pass 3 jours",
-      description: "entrée pour 3 jours",
-      price: 50, // Changer basePrice en price
-    },
   ];
 
   for (const passData of passes) {

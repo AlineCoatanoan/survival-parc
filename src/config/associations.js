@@ -27,6 +27,9 @@ export const initializeModels = () => {
   Hotel.hasMany(Reservation, { foreignKey: "hotelId", sourceKey: "id" });
   Reservation.belongsTo(Hotel, { foreignKey: "hotelId", targetKey: "id" });
 
+  Pass.hasMany(Reservation, { foreignKey: "passId", sourceKey: "id" });
+  Reservation.belongsTo(Pass, { foreignKey: "passId", targetKey: "id" });
+
   Animation.hasMany(Reservation, {
     foreignKey: "animationId",
     sourceKey: "id",

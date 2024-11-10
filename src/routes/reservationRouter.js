@@ -4,7 +4,8 @@ import { ctrlWrapper as cw } from "../../utils/ctrlWrapper.js";
 
 export const router = Router();
 
-router.post("/reservation", cw(reservationController.createReservation));
-router.get("/reservation", cw(reservationController.getReservation));
-router.put("/reservation/:id", cw(reservationController.updateReservation));
-router.delete("/reservation/:id", cw(reservationController.deleteReservation));
+router.get("/", cw(reservationController.getAllReservations));
+router.get("/:id", cw(reservationController.getReservationsByUser));
+router.post("/", cw(reservationController.createReservation));
+router.put("/:id", cw(reservationController.updateReservation));
+router.delete("/:id", cw(reservationController.deleteReservation));
