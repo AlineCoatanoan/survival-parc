@@ -6,8 +6,8 @@ export const seedPass = async () => {
   const passes = [
     // Renommé pour éviter la confusion avec le modèle
     {
-      name: "Ticket",
-      description: "entrée pour un jour",
+      name: "Pass 2 jours",
+      description: "pass pour 2 jours",
       price: 20,
     },
     {

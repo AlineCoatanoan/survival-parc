@@ -11,7 +11,7 @@ export const seedHotel = async () => {
       address: "12 rue de la gare", // Correction ici
       postalCode: "75001",
       city: "Paris",
-      priceByNight: 50, // Ajoutez le prix par nuit ici
+      priceByNight: 80, // Ajoutez le prix par nuit ici
     },
     {
       name: "Hotel le refuge des survivants",
@@ -20,7 +20,7 @@ export const seedHotel = async () => {
       address: "12 rue de la gare", // Correction ici
       postalCode: "75001",
       city: "Paris",
-      priceByNight: 30,
+      priceByNight: 60,
     },
   ];
 

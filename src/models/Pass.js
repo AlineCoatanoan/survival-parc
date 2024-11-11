@@ -22,6 +22,10 @@ export class Pass extends Model {
           type: DataTypes.DECIMAL(10, 2),
           allowNull: false,
         },
+        nights: {
+          type: DataTypes.INTEGER,
+          allowNull: true,
+        },
       },
       {
         sequelize,

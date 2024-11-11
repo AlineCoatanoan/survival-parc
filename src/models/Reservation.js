@@ -22,10 +22,6 @@ export class Reservation extends Model {
           type: DataTypes.DATE,
           allowNull: false,
         },
-        nights: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
         person: {
           type: DataTypes.INTEGER,
           allowNull: false,
@@ -44,11 +40,16 @@ export class Reservation extends Model {
         },
         hotelId: {
           type: DataTypes.INTEGER,
+          allowNull: false, // Ajoute cette ligne si l'identifiant de l'hôtel est obligatoire
           references: {
-            model: "hotels", // Assurez-vous que la table 'hotels' existe
+            model: "hotels",
             key: "id",
           },
           onDelete: "CASCADE",
+        },
+        hotelName: {
+          type: DataTypes.STRING,
+          allowNull: true,
         },
         passId: {
           type: DataTypes.INTEGER,

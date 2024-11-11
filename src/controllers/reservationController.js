@@ -24,14 +24,44 @@ export const getReservationsByUser = ctrlWrapper(async (req, res) => {
 });
 
 // create reservation (linked to userId)
+// create reservation (linked to userId)
 export const createReservation = ctrlWrapper(async (req, res) => {
-  const { startDate, endDate, nights, person, price, userId } = req.body;
+  const {
+    startDate,
+    endDate,
+    nights,
+    person,
+    price,
+    userId,
+    hotelId,
+    hotelName,
+  } = req.body;
 
   // Vérification des champs requis
-  if (!startDate || !endDate || !person || !price || !userId) {
+  if (
+    !startDate ||
+    !endDate ||
+    !person ||
+    !price ||
+    !userId ||
+    !hotelId ||
+    !hotelName
+  ) {
     return res
       .status(400)
       .json({ message: "Les informations nécessaires sont manquantes." });
+  }
+
+  // Vérification si l'utilisateur et l'hôtel existent
+  const user = await models.Profile.findOne({ where: { id: userId } });
+  const hotel = await models.Hotel.findOne({ where: { id: hotelId } });
+
+  if (!user) {
+    return res.status(404).json({ message: "Utilisateur non trouvé." });
+  }
+
+  if (!hotel) {
+    return res.status(404).json({ message: "Hôtel non trouvé." });
   }
 
   // Si 'nights' est omis ou égal à 0, calculez-le
@@ -39,24 +69,28 @@ export const createReservation = ctrlWrapper(async (req, res) => {
     nights > 0 ? nights : calculateNights(startDate, endDate);
 
   try {
-    const reservation = await Reservation.create({
+    const reservationData = {
       startDate,
       endDate,
       nights: calculatedNights,
       person,
       price,
       userId,
-    });
+      hotelId,
+      hotelName, // Inclut l'ID de l'hôtel pour la réservation
+    };
+
+    const reservation = await Reservation.create(reservationData);
 
     successResponse(res, "Réservation créée avec succès", reservation);
   } catch (err) {
-    console.error("Erreur lors de la création de la réservation:", err); // Log détaillé de l'erreur
+    console.error("Erreur lors de la création de la réservation:", err);
 
     // Affichage de l'erreur complète dans la réponse
     return res.status(500).json({
       message: "Erreur interne du serveur.",
-      error: err.message, // Détails de l'erreur
-      stack: err.stack, // Stack trace pour aider à comprendre le problème
+      error: err.message,
+      stack: err.stack,
     });
   }
 });
