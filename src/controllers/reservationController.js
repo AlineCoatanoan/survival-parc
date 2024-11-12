@@ -24,7 +24,6 @@ export const getReservationsByUser = ctrlWrapper(async (req, res) => {
 });
 
 // create reservation (linked to userId)
-// create reservation (linked to userId)
 export const createReservation = ctrlWrapper(async (req, res) => {
   const {
     startDate,
