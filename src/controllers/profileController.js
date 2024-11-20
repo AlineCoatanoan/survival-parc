@@ -12,7 +12,7 @@ export const getProfiles = ctrlWrapper(async (req, res) => {
   successResponse(res, "Profiles retrieved successfully", profiles);
 });
 
-// get profile by ID (si vous souhaitez récupérer un profil spécifique)
+// get profile by ID
 export const getProfileById = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const profile = await Profile.findByPk(id);

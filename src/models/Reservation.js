@@ -51,14 +51,6 @@ export class Reservation extends Model {
           type: DataTypes.STRING,
           allowNull: true,
         },
-        passId: {
-          type: DataTypes.INTEGER,
-          references: {
-            model: "passes", // Assurez-vous que la table 'passes' existe
-            key: "id",
-          },
-          onDelete: "CASCADE",
-        },
       },
       {
         sequelize,

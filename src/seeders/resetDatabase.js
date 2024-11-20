@@ -3,7 +3,6 @@ import { initializeModels } from "../config/associations.js"; // Ajuste le chemi
 import { User } from "../models/User.js";
 import { Profile } from "../models/Profile.js";
 import { Reservation } from "../models/Reservation.js";
-import { Pass } from "../models/Pass.js";
 import { Hotel } from "../models/Hotel.js";
 import { Animation } from "../models/Animation.js";
 
@@ -21,7 +20,6 @@ const resetDatabase = async () => {
     await User.drop().catch(() => {});
     await Profile.drop().catch(() => {});
     await Reservation.drop().catch(() => {});
-    await Pass.drop().catch(() => {});
     await Hotel.drop().catch(() => {});
     await Animation.drop().catch(() => {});
 

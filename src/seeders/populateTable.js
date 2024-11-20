@@ -1,7 +1,6 @@
 import { sequelize } from "../config/dbclient.js";
 import { seedAnimation } from "./seeding/seedAnimation.js";
 import { seedHotel } from "./seeding/seedHotel.js";
-import { seedPass } from "./seeding/seedPass.js";
 import { seedProfile } from "./seeding/seedProfile.js";
 import { seedReservation } from "./seeding/seedReservation.js";
 import { seedUser } from "./seeding/seedUser.js";
@@ -9,12 +8,11 @@ import { seedUser } from "./seeding/seedUser.js";
 const populateTable = async () => {
   try {
     console.log("🚀 Populating tables...");
-    await seedUser(); // 1. Insérer utilisateurs
-    await seedProfile(); // 2. Insérer profils qui dépendent des utilisateurs
-    await seedHotel(); // 3. Insérer hôtels
-    await seedPass(); // 4. Insérer pass
-    await seedReservation(); // 5. Insérer réservations qui dépendent des profils, hôtels et pass
-    await seedAnimation(); // 6. Insérer animations (indépendant)
+    await seedUser();
+    await seedProfile();
+    await seedHotel();
+    await seedReservation();
+    await seedAnimation();
     console.log("✅ Tables populated successfully!");
   } catch (error) {
     console.error("❌ Error populating tables:", error);
