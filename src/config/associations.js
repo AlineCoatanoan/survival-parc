@@ -4,6 +4,7 @@ import { Profile } from "../models/Profile.js";
 import { Reservation } from "../models/Reservation.js";
 import { Hotel } from "../models/Hotel.js";
 import { Animation } from "../models/Animation.js";
+import { ProfileHotel } from "../models/ProfileHotel.js";
 
 // Initialisation des modèles et associations
 export const initializeModels = () => {
@@ -13,6 +14,7 @@ export const initializeModels = () => {
     Reservation: Reservation.init(sequelize),
     Hotel: Hotel.init(sequelize),
     Animation: Animation.init(sequelize),
+    ProfileHotel: ProfileHotel.init(sequelize),
   };
 
   // Associations entre les modèles
@@ -23,11 +25,11 @@ export const initializeModels = () => {
   Reservation.belongsTo(Profile, { foreignKey: "profileId", targetKey: "id" });
 
   Profile.belongsToMany(Hotel, {
-    through: "ProfileHotel",
+    through: models.ProfileHotel,
     foreignKey: "profileId",
   });
   Hotel.belongsToMany(Profile, {
-    through: "ProfileHotel",
+    through: models.ProfileHotel,
     foreignKey: "hotelId",
   });
 

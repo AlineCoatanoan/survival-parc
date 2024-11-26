@@ -26,7 +26,7 @@ export class Hotel extends Model {
           type: DataTypes.STRING,
           allowNull: false,
           validate: {
-            len: [5, 10], // Longueur minimale et maximale
+            len: [5, 10],
           },
         },
         city: {
@@ -45,5 +45,13 @@ export class Hotel extends Model {
         timestamps: true,
       }
     );
+  }
+  static associate(models) {
+    // Un hôtel peut avoir plusieurs réservations (via la table de liaison ProfileHotel)
+    this.belongsToMany(models.Profile, {
+      through: models.ProfileHotel,
+      foreignKey: "hotelId",
+      as: "profiles",
+    });
   }
 }

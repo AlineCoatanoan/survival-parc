@@ -16,10 +16,10 @@ export const seedUser = async () => {
     },
     {
       id: 2,
-      firstName: "Alex",
-      lastName: "Legrand",
-      email: "alex.legrand@example.com",
-      password: "alexPassword123!", // Mot de passe en clair
+      firstName: "Chandler",
+      lastName: "Bing",
+      email: "bing@.com",
+      password: "chandler!", // Mot de passe en clair
       role: "user",
     },
   ];

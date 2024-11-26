@@ -40,16 +40,12 @@ export class Reservation extends Model {
         },
         hotelId: {
           type: DataTypes.INTEGER,
-          allowNull: false, // Ajoute cette ligne si l'identifiant de l'hôtel est obligatoire
+          allowNull: true, // Modifié ici pour rendre l'hôtel facultatif
           references: {
             model: "hotels",
             key: "id",
           },
-          onDelete: "CASCADE",
-        },
-        hotelName: {
-          type: DataTypes.STRING,
-          allowNull: true,
+          onDelete: "SET NULL", // Si l'hôtel est supprimé, l'hôtel de cette réservation devient NULL
         },
       },
       {

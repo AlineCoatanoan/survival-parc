@@ -9,9 +9,8 @@ export const seedReservation = async () => {
       endDate: "2023-01-01",
       person: 3,
       price: 60,
-      userId: 1,
+      profileId: 1,
       hotelId: 2,
-      passId: 1,
     },
     {
       description: "Reservation pour un ticket 2 jours",
@@ -19,9 +18,8 @@ export const seedReservation = async () => {
       endDate: "2023-01-02",
       person: 3,
       price: 60,
-      userId: 2,
+      profileId: 2,
       hotelId: 1,
-      passId: 2,
     },
   ];
 

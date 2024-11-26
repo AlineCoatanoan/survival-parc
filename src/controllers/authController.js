@@ -4,19 +4,14 @@ import { badRequestResponse } from "../middlewares/errors.js";
 import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
 import { generateToken } from "../../utils/jwt.js";
-import { setCookies, clearCookies } from "../../utils/cookieUtils.js"; // Chemin à adapter
-import bcrypt from "bcrypt"; // Assure-toi d'avoir installé bcrypt
+import { setCookies, clearCookies } from "../../utils/cookieUtils.js";
+import bcrypt from "bcrypt";
 
 const { User } = models;
 
 // login
 export const login = ctrlWrapper(async (req, res) => {
   const { email, password } = req.body;
-
-  // Vérifie si l'email et le mot de passe sont fournis
-  if (!email || !password) {
-    return badRequestResponse(res, "Email and password are required");
-  }
 
   // Recherche l'utilisateur par email
   const user = await User.findOne({ where: { email } });
@@ -27,7 +22,7 @@ export const login = ctrlWrapper(async (req, res) => {
   // Vérifie le mot de passe
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    return badRequestResponse(res, "Wrong password");
+    return badRequestResponse(res, "Erreur mot de passe");
   }
 
   // Vérification du rôle de l'utilisateur
@@ -38,7 +33,7 @@ export const login = ctrlWrapper(async (req, res) => {
   }
 
   // Génère un token JWT pour l'utilisateur
-  const token = generateToken(user); // Passer l'utilisateur complet
+  const token = generateToken(user);
 
   // Sauvegarde le token dans la base de données pour l'utilisateur
   user.token = token;

@@ -9,18 +9,30 @@ export const generateToken = (user) => {
     throw new Error("User object must contain id and role");
   }
 
+  // Vérifie que la clé secrète et l'expiration sont définies dans les variables d'environnement
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined in the environment variables");
+  }
+
+  // Utilisation de la durée d'expiration définie dans .env, avec une valeur par défaut de "1h"
+  const expiresIn = process.env.JWT_EXPIRES_IN || "1h";
+
   return jwt.sign(
-    { id: user.id, role: user.role }, // Inclure 'id' et 'role' dans le payload du token
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || "1h" } // Par défaut, expiration dans 1 heure
+    { id: user.id, role: user.role }, // Payload
+    process.env.JWT_SECRET, // Clé secrète
+    { expiresIn } // Durée d'expiration
   );
 };
 
 // Fonction pour vérifier un token JWT
 export const verifyToken = (token) => {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET);
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined in the environment variables");
+    }
+
+    return jwt.verify(token, process.env.JWT_SECRET); // Vérifie et retourne le payload
   } catch (error) {
-    throw new Error("Invalid token");
+    throw new Error("Invalid token: " + error.message);
   }
 };

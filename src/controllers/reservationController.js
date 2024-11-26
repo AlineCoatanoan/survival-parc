@@ -11,13 +11,14 @@ export const getAllReservations = ctrlWrapper(async (req, res) => {
   successResponse(res, "Reservations fetched successfully", reservations);
 });
 
-// get reservation by user ID
-export const getReservationsByUser = ctrlWrapper(async (req, res) => {
-  const userId = req.params.id;
-  const reservations = await Reservation.findAll({ where: { userId } });
+export const getReservationsByProfileId = ctrlWrapper(async (req, res) => {
+  const profileId = req.params.profileId; // Récupération du profileId depuis les paramètres de l'URL
+
+  // Récupérer les réservations associées à ce profileId
+  const reservations = await Reservation.findAll({ where: { profileId } });
 
   if (!reservations || reservations.length === 0) {
-    return error404(res, "Aucune réservation trouvée pour cet utilisateur.");
+    return error404(res, "Aucune réservation trouvée pour ce profil.");
   }
 
   successResponse(res, "Réservations récupérées avec succès", reservations);
@@ -25,45 +26,28 @@ export const getReservationsByUser = ctrlWrapper(async (req, res) => {
 
 // create reservation (linked to userId)
 export const createReservation = ctrlWrapper(async (req, res) => {
-  const {
-    startDate,
-    endDate,
-    nights,
-    person,
-    price,
-    userId,
-    hotelId,
-    hotelName,
-  } = req.body;
+  const { startDate, endDate, nights, person, price, profileId, hotelId } =
+    req.body;
 
   // Vérification des champs requis
-  if (
-    !startDate ||
-    !endDate ||
-    !person ||
-    !price ||
-    !userId ||
-    !hotelId ||
-    !hotelName
-  ) {
+  if (!startDate || !endDate || !person || !price || !profileId) {
     return res
       .status(400)
       .json({ message: "Les informations nécessaires sont manquantes." });
   }
 
-  // Vérification si l'utilisateur et l'hôtel existent
-  const user = await models.Profile.findOne({ where: { id: userId } });
-  const hotel = await models.Hotel.findOne({ where: { id: hotelId } });
+  // Vérification du profil
+  const profile = await models.Profile.findOne({ where: { id: profileId } });
+  if (!profile) return res.status(404).json({ message: "Profil non trouvé." });
 
-  if (!user) {
-    return res.status(404).json({ message: "Utilisateur non trouvé." });
+  // Si un hôtel est spécifié, vérifiez son existence
+  let hotel = null;
+  if (hotelId) {
+    hotel = await models.Hotel.findOne({ where: { id: hotelId } });
+    if (!hotel) return res.status(404).json({ message: "Hôtel non trouvé." });
   }
 
-  if (!hotel) {
-    return res.status(404).json({ message: "Hôtel non trouvé." });
-  }
-
-  // Si 'nights' est omis ou égal à 0, calculez-le
+  // Calcul du nombre de nuits
   const calculatedNights =
     nights > 0 ? nights : calculateNights(startDate, endDate);
 
@@ -74,18 +58,13 @@ export const createReservation = ctrlWrapper(async (req, res) => {
       nights: calculatedNights,
       person,
       price,
-      userId,
-      hotelId,
-      hotelName, // Inclut l'ID de l'hôtel pour la réservation
+      profileId,
+      hotelId: hotelId || null,
     };
 
     const reservation = await Reservation.create(reservationData);
-
     successResponse(res, "Réservation créée avec succès", reservation);
   } catch (err) {
-    console.error("Erreur lors de la création de la réservation:", err);
-
-    // Affichage de l'erreur complète dans la réponse
     return res.status(500).json({
       message: "Erreur interne du serveur.",
       error: err.message,

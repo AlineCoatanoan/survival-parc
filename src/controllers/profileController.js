@@ -3,7 +3,7 @@ import { error404 } from "../middlewares/error404.js";
 import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
 
-const { Profile } = models;
+const { Profile, User } = models;
 
 // get all profiles
 export const getProfiles = ctrlWrapper(async (req, res) => {
@@ -12,52 +12,106 @@ export const getProfiles = ctrlWrapper(async (req, res) => {
   successResponse(res, "Profiles retrieved successfully", profiles);
 });
 
-// get profile by ID
-export const getProfileById = ctrlWrapper(async (req, res) => {
-  const { id } = req.params;
-  const profile = await Profile.findByPk(id);
-  if (!profile) return error404(res, "Profile not found");
+// Récupérer le profil d'un utilisateur par son userId
+export const getProfileByUserId = ctrlWrapper(async (req, res) => {
+  const { userId } = req.params; // Récupérer l'userId depuis l'URL
 
-  successResponse(res, "Profile retrieved successfully", profile);
+  // Trouver le profil associé à cet userId
+  const profile = await Profile.findOne({ where: { userId } });
+
+  if (!profile) {
+    return res.status(404).json({ message: "Profil non trouvé" });
+  }
+
+  return res.json({
+    success: true,
+    message: "Profil récupéré avec succès",
+    data: profile,
+  });
 });
 
-// create profile
+// Créer un profil pour un utilisateur donné
 export const createProfile = ctrlWrapper(async (req, res) => {
-  const { firstName, lastName, email, phoneNumber, address } = req.body;
+  const { userId } = req.params;
+  const { firstName, lastName, birthDate, phone, address, postalCode, city } =
+    req.body;
+
+  // Vérification de la validité de birthDate au format 'YYYY-MM-DD'
+  if (!birthDate || !/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+    return res.status(400).json({
+      message:
+        "Le format de la date de naissance est invalide. Utilisez 'YYYY-MM-DD'.",
+    });
+  }
+
+  // Supprimer l'heure de birthDate (nous récupérons uniquement la date au format 'YYYY-MM-DD')
+  const birthDateWithoutTime = new Date(birthDate).toISOString().split("T")[0];
+
+  // Vérification si la date est antérieure à la date actuelle
+  const today = new Date();
+  const birthDateObject = new Date(birthDateWithoutTime); // Créez un objet Date à partir de la date sans l'heure
+  if (birthDateObject >= today) {
+    return res.status(400).json({
+      message: "La date de naissance doit être antérieure à aujourd'hui.",
+    });
+  }
+
+  const user = await User.findByPk(userId);
+  if (!user) {
+    return res.status(404).json({ message: "Utilisateur non trouvé" });
+  }
+
   const profile = await Profile.create({
+    userId,
     firstName,
     lastName,
-    email,
-    phoneNumber,
+    birthDate: birthDateWithoutTime, // Utilisez la date sans heure ici
+    phone,
     address,
+    postalCode,
+    city,
   });
-  successResponse(res, "Profile created successfully", profile);
+
+  return res.status(201).json({
+    message: "Profil créé avec succès",
+    data: profile,
+  });
 });
 
 // update profile
 export const updateProfile = ctrlWrapper(async (req, res) => {
   const { firstName, lastName, email, phoneNumber, address } = req.body;
-  const { id } = req.params;
+  const { userId } = req.params; // Utiliser userId dans l'URL
 
-  const profile = await Profile.findByPk(id);
-  if (!profile) return error404(res, "Profile not found");
+  const profile = await Profile.findOne({ where: { userId } }); // Trouver le profil par userId
+  if (!profile) {
+    return error404(res, "Profile not found");
+  }
 
+  // Mettre à jour les champs si les valeurs sont fournies dans la requête
   if (firstName) profile.firstName = firstName;
   if (lastName) profile.lastName = lastName;
   if (email) profile.email = email;
   if (phoneNumber) profile.phoneNumber = phoneNumber;
   if (address) profile.address = address;
 
+  // Sauvegarder les changements
   await profile.save();
+
+  // Retourner une réponse de succès
   successResponse(res, "Profile updated successfully", profile);
 });
 
-// delete profile
+// delete profile with user authentication check
 export const deleteProfile = ctrlWrapper(async (req, res) => {
-  const { id } = req.params;
-  const profile = await Profile.findByPk(id);
-  if (!profile) return error404(res, "Profile not found");
+  const { userId } = req.params; // Utilisez userId au lieu de id
 
+  const profile = await Profile.findOne({ where: { userId } });
+  if (!profile) {
+    return res.status(404).json({ message: "Profile not found" });
+  }
+
+  // Supprimer le profil
   await profile.destroy();
   successResponse(res, "Profile deleted successfully");
 });

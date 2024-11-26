@@ -4,6 +4,7 @@ import { seedHotel } from "./seeding/seedHotel.js";
 import { seedProfile } from "./seeding/seedProfile.js";
 import { seedReservation } from "./seeding/seedReservation.js";
 import { seedUser } from "./seeding/seedUser.js";
+import { seedProfileHotel } from "./seeding/seedProfileHotel.js";
 
 const populateTable = async () => {
   try {
@@ -13,6 +14,7 @@ const populateTable = async () => {
     await seedHotel();
     await seedReservation();
     await seedAnimation();
+    await seedProfileHotel();
     console.log("✅ Tables populated successfully!");
   } catch (error) {
     console.error("❌ Error populating tables:", error);

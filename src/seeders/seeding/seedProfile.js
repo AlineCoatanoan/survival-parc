@@ -16,13 +16,13 @@ export const seedProfile = async () => {
     },
     {
       userId: 2, // Correspond au userId de Alex
-      firstName: "Alex",
-      lastName: "Legrand",
+      firstName: "Chandler",
+      lastName: "Bing",
       birthDate: "1982-05-30",
       phone: "0687654321",
-      address: "12 rue de la gare",
+      address: "Central park",
       postalCode: "75001",
-      city: "Paris",
+      city: "New-York",
     },
   ];
 

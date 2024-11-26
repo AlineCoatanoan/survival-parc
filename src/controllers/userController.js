@@ -5,6 +5,7 @@ import { models } from "../models/index.js";
 import { Op } from "sequelize";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { setCookies } from "../../utils/cookieUtils.js";
 
 const { User } = models;
 
@@ -37,41 +38,38 @@ export const getUserId = ctrlWrapper(async (req, res) => {
 
 // create user
 export const createUser = ctrlWrapper(async (req, res) => {
-  const { firstName, lastName, email, password, role } = req.body; // Récupération des données
+  const { firstName, lastName, email, password, role } = req.body;
 
-  try {
-    // Hachage du mot de passe avec un salt de 10
-    const hashedPassword = await bcrypt.hash(password, 10);
+  // Hachage du mot de passe
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Création de l'utilisateur
-    const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-      role,
-    });
+  // Création de l'utilisateur
+  const user = await User.create({
+    firstName,
+    lastName,
+    email,
+    password: hashedPassword,
+    role,
+  });
 
-    // Génération du token JWT
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET, // Assure-toi que JWT_SECRET est défini dans ton .env
-      { expiresIn: "1h" } // Durée de validité du token (ajuste en fonction de tes besoins)
-    );
+  // Génération du token
+  const token = jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+  );
 
-    // Envoie le token avec la réponse de succès
-    successResponse(res, "User created successfully", {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      token, // Ajoute le token ici
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    });
-  } catch (error) {
-    console.error("Error creating user:", error);
-    return res.status(400).json({ message: "Error creating user", error });
-  }
+  // Définir un cookie sécurisé contenant le token
+  setCookies(res, token);
+
+  // Envoie une réponse au client
+  successResponse(res, "User created successfully", {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  });
 });
 
 // update user

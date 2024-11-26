@@ -5,6 +5,7 @@ import { Profile } from "../models/Profile.js";
 import { Reservation } from "../models/Reservation.js";
 import { Hotel } from "../models/Hotel.js";
 import { Animation } from "../models/Animation.js";
+import { ProfileHotel } from "../models/ProfileHotel.js";
 
 const resetDatabase = async () => {
   try {
@@ -22,6 +23,7 @@ const resetDatabase = async () => {
     await Reservation.drop().catch(() => {});
     await Hotel.drop().catch(() => {});
     await Animation.drop().catch(() => {});
+    await ProfileHotel.drop().catch(() => {});
 
     console.log("✅ Tables dropped successfully.");
 

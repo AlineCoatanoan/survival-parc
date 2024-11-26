@@ -1,8 +1,12 @@
-import { Router } from "express";
-import * as authController from "../controllers/authController.js";
-import { ctrlWrapper as cw } from "../../utils/ctrlWrapper.js";
+import express from "express";
+import { login, logout } from "../controllers/authController.js";
+import { validateLogin } from "../middlewares/validate.js";
+import { authenticateToken } from "../middlewares/authenticateToken.js";
 
-export const router = Router();
+export const router = express.Router();
 
-router.post("/login", cw(authController.login));
-router.post("/logout", cw(authController.logout));
+// Route pour le login (pas besoin d'authenticateToken car on ne vérifie pas encore d'utilisateur)
+router.post("/login", validateLogin, login);
+
+// Route pour le logout (nécessite que l'utilisateur soit authentifié)
+router.post("/logout", authenticateToken, logout);
