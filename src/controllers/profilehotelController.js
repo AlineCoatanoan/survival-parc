@@ -1,117 +1,115 @@
 import { successResponse } from "../middlewares/success.js";
-import { errorResponse, badRequestResponse } from "../middlewares/errors.js";
 import { error404 } from "../middlewares/error404.js";
 import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
+import { Op } from "sequelize";
 
-const { ProfileHotel, Profile, Hotel } = models;
+const { ProfileHotel, Hotel, Profile } = models;
 
-// récupérer toutes les réservations d'hôtels
+/**Récupère toutes les réservations avec les informations des hôtels incluses. */
 export const getAllReservationsHotels = ctrlWrapper(async (req, res) => {
-  const reservations = await ProfileHotel.findAll();
-  successResponse(res, "Reservations fetched successfully", reservations);
+  const reservations = await ProfileHotel.findAll({
+    include: [
+      {
+        model: Hotel,
+        as: "hotel", // Utilise l'alias défini dans l'association pour Hotel
+      },
+      {
+        model: Profile,
+        as: "profile", // Utilise l'alias défini dans l'association pour Profile
+      },
+    ],
+  });
+
+  res.json(reservations); // Envoie les résultats
 });
 
-// Récupérer toutes les réservations d'hôtels pour un profil spécifique
+/**Récupère toutes les réservations d'un `profileId` avec les informations des hôtels incluses.*/
 export const getReservationAllHotelsById = ctrlWrapper(async (req, res) => {
   const { profileId } = req.params;
-  try {
-    // Récupérer le profil avec les hôtels associés et les réservations via la table de jonction ProfileHotel
-    const profile = await Profile.findByPk(profileId, {
-      include: [
-        {
-          model: Hotel,
-          as: "hotels", // Utilisez l'alias défini dans Profile
-          attributes: [
-            "id",
-            "name",
-            "description",
-            "address",
-            "city",
-            "priceByNight",
-          ], // Attributs de l'hôtel
-          through: {
-            attributes: ["startDate", "endDate", "status"], // Attributs de la table de jonction ProfileHotel
-          },
-        },
-      ],
-    });
 
-    // Si le profil n'existe pas, retour d'erreur
-    if (!profile) {
-      return errorResponse(res, "Profile not found");
-    }
+  const reservations = await ProfileHotel.findAll({
+    where: { profileId },
+    include: {
+      model: Hotel,
+      as: "hotel", // Alias pour les hôtels
+    },
+  });
 
-    // Vérifiez que le profil a des hôtels associés
-    if (profile.hotels && profile.hotels.length > 0) {
-      // Réponse avec les hôtels et les détails de réservation
-      return successResponse(res, 200, "Reservations fetched", profile.hotels);
-    } else {
-      // Si aucun hôtel n'est associé au profil
-      return successResponse(res, 200, "No reservations found", []);
-    }
-  } catch (error) {
-    return errorResponse(res, "Error fetching reservations", error); // Gestion des erreurs
+  if (!reservations.length) {
+    return error404(res, `No reservations found for profileId ${profileId}.`);
   }
+
+  return successResponse(res, reservations);
 });
 
-export const createReservationHotel = ctrlWrapper(async (req, res) => {
+export const createReservationHotel = async (req, res) => {
   const { profileId, hotelId, startDate, endDate, status } = req.body;
 
+  // Vérification des champs nécessaires
+  if (!profileId || !hotelId || !startDate || !endDate || !status) {
+    return res
+      .status(400)
+      .json({ message: "Les informations nécessaires sont manquantes." });
+  }
+
+  // Vérification si le profil existe
+  const profile = await models.Profile.findOne({ where: { id: profileId } });
+  if (!profile) return res.status(404).json({ message: "Profil non trouvé." });
+
+  // Si un hôtel est spécifié, vérifiez son existence
+  let hotel = null;
+  if (hotelId) {
+    hotel = await models.Hotel.findOne({ where: { id: hotelId } });
+    if (!hotel) return res.status(404).json({ message: "Hôtel non trouvé." });
+  }
+
+  // Vérifier s'il n'y a pas de réservation existante qui chevauche les dates
+  const existingReservation = await models.ProfileHotel.findOne({
+    where: {
+      profileId,
+      hotelId,
+      [Op.or]: [
+        { startDate: { [Op.between]: [startDate, endDate] } },
+        { endDate: { [Op.between]: [startDate, endDate] } },
+        {
+          [Op.and]: [
+            { startDate: { [Op.lte]: startDate } },
+            { endDate: { [Op.gte]: endDate } },
+          ],
+        },
+      ],
+    },
+  });
+
+  if (existingReservation) {
+    return res.status(400).json({
+      message: `Une réservation existe déjà pour ce profil et cet hôtel dans cette période.`,
+    });
+  }
+
+  // Création de la nouvelle réservation
   try {
-    // Création de la réservation
-    const reservation = await ProfileHotel.create({
+    const reservationHotelData = {
       profileId,
       hotelId,
       startDate,
       endDate,
       status,
+    };
+
+    const newReservation =
+      await models.ProfileHotel.create(reservationHotelData);
+    return successResponse(
+      res,
+      "Réservation créée avec succès",
+      newReservation
+    );
+  } catch (err) {
+    return res.status(500).json({
+      message: "Erreur interne du serveur.",
+      error: err.message,
+      stack: err.stack,
     });
-
-    // Réponse réussie
-    successResponse(res, 201, "Reservation created", reservation);
-  } catch (error) {
-    res.status(400).json({ message: "Error creating reservation", error });
   }
-});
-
-// Mettre à jour une réservation
-export const updateReservationHotel = ctrlWrapper(async (req, res) => {
-  const { id } = req.params;
-  const { startDate, endDate, status } = req.body;
-
-  // Trouver la réservation existante
-  const reservation = await ProfileHotel.update(id, startDate, endDate, status);
-
-  if (!reservation) {
-    return error404(res, "Reservation not found");
-  }
-
-  // Mise à jour des informations
-  reservation.startDate = startDate || reservation.startDate;
-  reservation.endDate = endDate || reservation.endDate;
-  reservation.status = status || reservation.status;
-
-  await reservation.save();
-
-  // Réponse réussie
-  successResponse(res, 200, "Reservation updated", reservation);
-});
-
-// Delete une réservation d'hotel
-export const deleteReservationHotel = ctrlWrapper(async (req, res) => {
-  const { id } = req.params;
-
-  // Trouver la réservation
-  const reservation = await ProfileHotel.delete(id);
-
-  if (!reservation) {
-    return error404(res, "Reservation not found");
-  }
-
-  // Supprimer la réservation
-  await reservation.destroy();
-
-  // Réponse réussie
-  successResponse(res, 200, "Reservation deleted");
-});
+};

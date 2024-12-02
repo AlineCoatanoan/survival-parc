@@ -17,6 +17,13 @@ export const initializeModels = () => {
     ProfileHotel: ProfileHotel.init(sequelize),
   };
 
+  // Appel explicite de 'associate' pour chaque modèle qui en a une
+  Object.values(models).forEach((model) => {
+    if (model.associate) {
+      model.associate(models); // Appelle la méthode associate de chaque modèle
+    }
+  });
+
   // Associations entre les modèles
   User.hasOne(Profile, { foreignKey: "userId", sourceKey: "id" });
   Profile.belongsTo(User, { foreignKey: "userId", targetKey: "id" });
@@ -24,13 +31,20 @@ export const initializeModels = () => {
   Profile.hasMany(Reservation, { foreignKey: "profileId", sourceKey: "id" });
   Reservation.belongsTo(Profile, { foreignKey: "profileId", targetKey: "id" });
 
+  // Dans le modèle Profile
   Profile.belongsToMany(Hotel, {
-    through: models.ProfileHotel,
+    through: ProfileHotel,
     foreignKey: "profileId",
+    otherKey: "hotelId",
+    as: "profileHotels", // Nouveau nom d'alias
   });
+
+  // Dans le modèle Hotel
   Hotel.belongsToMany(Profile, {
-    through: models.ProfileHotel,
+    through: ProfileHotel,
     foreignKey: "hotelId",
+    otherKey: "profileId",
+    as: "hotelProfiles", // Nouveau nom d'alias
   });
 
   return models;

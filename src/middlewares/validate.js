@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { badRequestResponse } from "../middlewares/errors.js"; // Assure-toi que cette fonction gère les erreurs correctement
+import { badRequestResponse } from "../middlewares/errors.js";
 
 export const validateLogin = (req, res, next) => {
   const schema = Joi.object({
@@ -16,10 +16,10 @@ export const validateLogin = (req, res, next) => {
   const { error } = schema.validate(req.body);
 
   if (error) {
-    return badRequestResponse(res, error.details[0].message); // Récupère et renvoie le premier message d'erreur
+    return badRequestResponse(res, error.details[0].message);
   }
 
-  next(); // Passe au controller si la validation réussit
+  next();
 };
 
 export const validateRegister = (req, res, next) => {

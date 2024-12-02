@@ -33,7 +33,7 @@ export const getAnimationsByType = ctrlWrapper(async (req, res) => {
 
 // create animation
 export const createAnimation = ctrlWrapper(async (req, res) => {
-  const { name, description, type } = req.body; // Remplacement de categoryId par type
+  const { name, description, type } = req.body;
   if (!name || !description || !type) {
     return res.status(400).json({
       success: false,
@@ -44,14 +44,14 @@ export const createAnimation = ctrlWrapper(async (req, res) => {
   const animation = await Animation.create({
     name,
     description,
-    type, // Remplacement de categoryId par type
+    type,
   });
   successResponse(res, "Animation created successfully", animation);
 });
 
 // update animation
 export const updateAnimation = ctrlWrapper(async (req, res) => {
-  const { name, description, type } = req.body; // Remplacement de categoryId par type
+  const { name, description, type } = req.body;
   const { id } = req.params;
 
   const animation = await Animation.findByPk(id);
@@ -59,7 +59,7 @@ export const updateAnimation = ctrlWrapper(async (req, res) => {
 
   if (name) animation.name = name;
   if (description) animation.description = description;
-  if (type) animation.type = type; // Remplacement de categoryId par type
+  if (type) animation.type = type;
 
   await animation.save();
   successResponse(res, "Animation updated successfully", animation);

@@ -42,7 +42,7 @@ app.use(
 // Middleware de session
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "votre_secret_ici",
+    secret: process.env.SESSION_SECRET || "",
     resave: false,
     saveUninitialized: true,
     cookie: {

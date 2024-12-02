@@ -1,5 +1,5 @@
 // middlewares/error404.js
-const error404 = (res, message) => {
+const error404 = (req, res, message) => {
   res.status(404).json({ message: message || "Not Found" });
 };
 

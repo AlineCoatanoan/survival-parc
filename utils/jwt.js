@@ -31,7 +31,7 @@ export const verifyToken = (token) => {
       throw new Error("JWT_SECRET is not defined in the environment variables");
     }
 
-    return jwt.verify(token, process.env.JWT_SECRET); // Vérifie et retourne le payload
+    return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
     throw new Error("Invalid token: " + error.message);
   }

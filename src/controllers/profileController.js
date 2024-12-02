@@ -44,7 +44,7 @@ export const createProfile = ctrlWrapper(async (req, res) => {
     });
   }
 
-  // Supprimer l'heure de birthDate (nous récupérons uniquement la date au format 'YYYY-MM-DD')
+  // récupérer la date au format 'YYYY-MM-DD'
   const birthDateWithoutTime = new Date(birthDate).toISOString().split("T")[0];
 
   // Vérification si la date est antérieure à la date actuelle

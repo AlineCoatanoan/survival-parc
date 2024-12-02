@@ -3,29 +3,30 @@ import { models } from "../../models/index.js";
 const { ProfileHotel } = models;
 
 export const seedProfileHotel = async () => {
-  const profileHotels = [
+  const profile_hotels = [
     {
-      profileId: 1,
-      hotelId: 1,
-      startDate: "2023-01-01",
-      endDate: "2023-01-02",
-      status: "confirmed",
+      id: 1,
+      profileId: 1, // Utilisation de minuscules
+      hotelId: 1, // Utilisation de minuscules
+      startDate: "2023-01-01", // Date au format correct
+      endDate: "2023-01-02", // Date au format correct
+      status: "confirmed", // Statut
     },
     {
-      profileId: 2,
-      hotelId: 2,
+      id: 2,
+      profileId: 2, // Utilisation de minuscules
+      hotelId: 2, // Utilisation de minuscules
       startDate: "2023-01-01",
       endDate: "2023-01-02",
       status: "confirmed",
     },
   ];
 
-  for (const profileHotel of profileHotels) {
-    try {
-      await ProfileHotel.create(profileHotel);
-      console.log("ProfileHotel seeded ✅");
-    } catch (error) {
-      console.error("❌ Error seeding profileHotels:", error);
-    }
+  try {
+    // Utilisation de bulkCreate pour insérer les données
+    await ProfileHotel.bulkCreate(profile_hotels);
+    console.log("ProfileHotels seeded successfully ✅");
+  } catch (error) {
+    console.error("Error seeding ProfileHotels:", error);
   }
 };

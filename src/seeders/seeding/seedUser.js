@@ -18,7 +18,7 @@ export const seedUser = async () => {
       id: 2,
       firstName: "Chandler",
       lastName: "Bing",
-      email: "bing@.com",
+      email: "bing@mail.com",
       password: "chandler!", // Mot de passe en clair
       role: "user",
     },

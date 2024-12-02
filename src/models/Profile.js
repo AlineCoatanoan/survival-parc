@@ -67,11 +67,10 @@ export class Profile extends Model {
     );
   }
   static associate(models) {
-    // Un profil peut avoir plusieurs réservations (via la table de liaison ProfileHotel)
     this.belongsToMany(models.Hotel, {
       through: models.ProfileHotel,
-      foreignKey: "profileId",
-      as: "hotels",
+      foreignKey: "profileId", // Le nom de la clé étrangère dans ProfileHotel
+      as: "hotels", // Alias pour accéder aux hôtels associés
     });
   }
 }

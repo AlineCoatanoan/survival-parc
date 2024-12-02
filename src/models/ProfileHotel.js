@@ -1,4 +1,5 @@
-import { Model, DataTypes } from "sequelize";
+// models/ProfileHotel.js
+import { Model, DataTypes, Op } from "sequelize";
 
 export class ProfileHotel extends Model {
   static init(sequelize) {
@@ -6,56 +7,69 @@ export class ProfileHotel extends Model {
       {
         id: {
           type: DataTypes.INTEGER,
-          allowNull: false,
-          autoIncrement: true,
           primaryKey: true,
+          autoIncrement: true,
+          allowNull: false,
+        },
+        profileId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: {
+            model: "profiles", // Table de référence
+            key: "id", // Clé primaire de la table "profiles"
+          },
+          onDelete: "CASCADE",
+        },
+        hotelId: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+          references: {
+            model: "hotels", // Table de référence
+            key: "id", // Clé primaire de la table "hotels"
+          },
+          onDelete: "CASCADE",
         },
         startDate: {
-          type: DataTypes.DATEONLY,
+          type: DataTypes.DATE,
           allowNull: false,
-          validate: {
-            isDate: true,
-          },
         },
         endDate: {
-          type: DataTypes.DATEONLY,
+          type: DataTypes.DATE,
           allowNull: false,
-          validate: {
-            isDate: true,
-            isAfterStartDate(value) {
-              if (this.startDate && value <= this.startDate) {
-                throw new Error("End date must be after start date.");
-              }
-            },
-          },
         },
         status: {
           type: DataTypes.STRING,
           allowNull: false,
-          defaultValue: "pending",
-          validate: {
-            isIn: [["pending", "confirmed", "cancelled"]],
-          },
+          defaultValue: "pending", // Statut par défaut
         },
       },
       {
         sequelize,
         modelName: "ProfileHotel",
-        tableName: "profile_hotels",
+        tableName: "profile_hotels", // Le nom de la table dans la base de données
         timestamps: true,
+        indexes: [
+          {
+            unique: true,
+            fields: ["profileId", "hotelId", "startDate"],
+          },
+          // Vous pouvez aussi indexer sur (profileId, hotelId, startDate, endDate) si vous préférez
+        ],
       }
     );
   }
 
   static associate(models) {
-    // Relations avec Profile et Hotel
+    // Correctement associer Profile -> ProfileHotel
     this.belongsTo(models.Profile, {
-      foreignKey: "profileId",
-      onDelete: "CASCADE", // Optionnel: permet de supprimer les associations si un profil est supprimé
+      foreignKey: "profileId", // La clé étrangère dans ProfileHotel
+      as: "profile", // Alias pour l'association vers Profile
     });
+
+    // Correctement associer Hotel -> ProfileHotel
     this.belongsTo(models.Hotel, {
-      foreignKey: "hotelId",
-      onDelete: "CASCADE", // Optionnel: permet de supprimer les associations si un hôtel est supprimé
+      foreignKey: "hotelId", // La clé étrangère dans ProfileHotel
+      as: "hotel", // Alias pour l'association vers Hotel
     });
   }
 }

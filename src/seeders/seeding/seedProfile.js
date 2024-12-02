@@ -5,6 +5,7 @@ const { Profile } = models;
 export const seedProfile = async () => {
   const profiles = [
     {
+      id: 1,
       userId: 1, // Correspond au userId de Aline
       firstName: "Aline",
       lastName: "Coding",
@@ -15,7 +16,8 @@ export const seedProfile = async () => {
       city: "Paris",
     },
     {
-      userId: 2, // Correspond au userId de Alex
+      id: 2,
+      userId: 2,
       firstName: "Chandler",
       lastName: "Bing",
       birthDate: "1982-05-30",
