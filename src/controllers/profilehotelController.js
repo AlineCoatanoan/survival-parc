@@ -2,7 +2,6 @@ import { successResponse } from "../middlewares/success.js";
 import { error404 } from "../middlewares/error404.js";
 import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
-import { Op } from "sequelize";
 
 const { ProfileHotel, Hotel, Profile } = models;
 
@@ -135,6 +134,43 @@ export const createReservationHotel = async (req, res) => {
           name: hotel.name,
         },
       },
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Erreur interne du serveur.",
+      error: err.message,
+      stack: err.stack,
+    });
+  }
+};
+
+//**delete une réservation d'hotel */
+export const deleteReservationHotel = async (req, res) => {
+  const { id } = req.params; // Extraction de l'ID de la réservation d'hôtel depuis l'URL
+  const { profileId, hotelId } = req.body; // Extraction des IDs du profil et de l'hôtel depuis le corps de la requête
+
+  // Vérification des champs nécessaires
+  if (!id || !profileId || !hotelId) {
+    return res
+      .status(400)
+      .json({ message: "Les informations nécessaires sont manquantes." });
+  }
+
+  try {
+    // Vérification si la réservation existe
+    const reservation = await models.ProfileHotel.findOne({
+      where: { id, profileId, hotelId },
+    });
+
+    if (!reservation)
+      return res.status(404).json({ message: "Réservation non trouvée." });
+
+    // Supprimer la réservation
+    await reservation.destroy();
+
+    return res.status(200).json({
+      success: true,
+      message: "Réservation supprimée avec succès",
     });
   } catch (err) {
     return res.status(500).json({

@@ -8,4 +8,4 @@ router.get("/", cw(reservationController.getAllReservations));
 router.get("/:profileId", cw(reservationController.getReservationsByProfileId));
 router.post("/:profileId", cw(reservationController.createReservation));
 router.put("/:id", cw(reservationController.updateReservation));
-router.delete("/:profileId", cw(reservationController.deleteReservation));
+router.delete("/:id", cw(reservationController.deleteReservation));

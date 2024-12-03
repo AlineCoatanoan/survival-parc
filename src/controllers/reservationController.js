@@ -93,15 +93,40 @@ export const updateReservation = ctrlWrapper(async (req, res) => {
 
 // delete reservation (only if it belongs to userId)
 export const deleteReservation = ctrlWrapper(async (req, res) => {
-  const { id } = req.params;
-  const { userId } = req.body;
+  const { id } = req.params; // ID de la réservation à supprimer
+  const { profileId } = req.body; // Récupération de l'ID du profil depuis le corps de la requête
 
-  const reservation = await Reservation.findOne({ where: { id, userId } });
-  if (!reservation)
-    return error404(res, "Réservation non trouvée ou non autorisée.");
+  // Vérification si l'ID de la réservation et le profileId sont bien fournis
+  if (!id || !profileId) {
+    return res
+      .status(400)
+      .json({ message: "Réservation ID ou Profil ID manquant" });
+  }
 
-  await reservation.destroy();
-  successResponse(res, "Réservation supprimée avec succès");
+  try {
+    // Vérification si la réservation existe pour cet utilisateur et ce profil
+    const reservation = await models.Reservation.findOne({
+      where: { id, profileId },
+    });
+
+    // Si la réservation n'est pas trouvée
+    if (!reservation) {
+      return error404(res, "Réservation non trouvée ou non autorisée.");
+    }
+
+    // Suppression de la réservation
+    await reservation.destroy();
+
+    // Réponse de succès
+    successResponse(res, "Réservation supprimée avec succès");
+  } catch (err) {
+    // Gestion des erreurs serveur
+    return res.status(500).json({
+      message: "Erreur interne du serveur.",
+      error: err.message,
+      stack: err.stack,
+    });
+  }
 });
 
 // search reservation by name

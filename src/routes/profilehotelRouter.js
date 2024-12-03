@@ -7,7 +7,7 @@ export const router = Router();
 router.post("/:profileId", cw(profilehotelController.createReservationHotel));
 router.put("/:profileId", cw(profilehotelController.updateReservationHotel));
 router.get("/", cw(profilehotelController.getAllReservationsHotels));
-router.delete("/:profileId", cw(profilehotelController.deleteReservationHotel));
+router.delete("/:id", cw(profilehotelController.deleteReservationHotel));
 router.get(
   "/:profileId",
   cw(profilehotelController.getReservationAllHotelsById)
