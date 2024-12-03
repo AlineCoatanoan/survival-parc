@@ -12,16 +12,27 @@ export const getAllReservationsHotels = ctrlWrapper(async (req, res) => {
     include: [
       {
         model: Hotel,
-        as: "hotel", // Utilise l'alias défini dans l'association pour Hotel
+        as: "hotel",
       },
       {
         model: Profile,
-        as: "profile", // Utilise l'alias défini dans l'association pour Profile
+        as: "profile",
       },
+    ],
+    attributes: [
+      "id",
+      "profileId",
+      "hotelId",
+      "startDate",
+      "endDate",
+      "status",
+      "priceByNight",
+      "numberOfPeople",
+      "totalPrice",
     ],
   });
 
-  res.json(reservations); // Envoie les résultats
+  res.json(reservations);
 });
 
 /**Récupère toutes les réservations d'un `profileId` avec les informations des hôtels incluses.*/
@@ -32,8 +43,19 @@ export const getReservationAllHotelsById = ctrlWrapper(async (req, res) => {
     where: { profileId },
     include: {
       model: Hotel,
-      as: "hotel", // Alias pour les hôtels
+      as: "hotel",
     },
+    attributes: [
+      "id",
+      "profileId",
+      "hotelId",
+      "startDate",
+      "endDate",
+      "status",
+      "priceByNight",
+      "numberOfPeople",
+      "totalPrice",
+    ],
   });
 
   if (!reservations.length) {
@@ -43,11 +65,30 @@ export const getReservationAllHotelsById = ctrlWrapper(async (req, res) => {
   return successResponse(res, reservations);
 });
 
+//**créer une réservation d'hotel */
 export const createReservationHotel = async (req, res) => {
-  const { profileId, hotelId, startDate, endDate, status } = req.body;
+  const {
+    profileId,
+    hotelId,
+    startDate,
+    endDate,
+    status,
+    priceByNight,
+    numberOfPeople,
+    totalPrice,
+  } = req.body;
 
   // Vérification des champs nécessaires
-  if (!profileId || !hotelId || !startDate || !endDate || !status) {
+  if (
+    !profileId ||
+    !hotelId ||
+    !startDate ||
+    !endDate ||
+    !status ||
+    priceByNight === undefined ||
+    numberOfPeople === undefined ||
+    totalPrice === undefined
+  ) {
     return res
       .status(400)
       .json({ message: "Les informations nécessaires sont manquantes." });
@@ -57,54 +98,44 @@ export const createReservationHotel = async (req, res) => {
   const profile = await models.Profile.findOne({ where: { id: profileId } });
   if (!profile) return res.status(404).json({ message: "Profil non trouvé." });
 
-  // Si un hôtel est spécifié, vérifiez son existence
-  let hotel = null;
-  if (hotelId) {
-    hotel = await models.Hotel.findOne({ where: { id: hotelId } });
-    if (!hotel) return res.status(404).json({ message: "Hôtel non trouvé." });
-  }
+  // Vérification si l'hôtel existe
+  const hotel = await models.Hotel.findOne({ where: { id: hotelId } });
+  if (!hotel) return res.status(404).json({ message: "Hôtel non trouvé." });
 
-  // Vérifier s'il n'y a pas de réservation existante qui chevauche les dates
-  const existingReservation = await models.ProfileHotel.findOne({
-    where: {
-      profileId,
-      hotelId,
-      [Op.or]: [
-        { startDate: { [Op.between]: [startDate, endDate] } },
-        { endDate: { [Op.between]: [startDate, endDate] } },
-        {
-          [Op.and]: [
-            { startDate: { [Op.lte]: startDate } },
-            { endDate: { [Op.gte]: endDate } },
-          ],
-        },
-      ],
-    },
-  });
-
-  if (existingReservation) {
-    return res.status(400).json({
-      message: `Une réservation existe déjà pour ce profil et cet hôtel dans cette période.`,
-    });
-  }
-
-  // Création de la nouvelle réservation
   try {
+    // Création de la réservation
     const reservationHotelData = {
       profileId,
       hotelId,
       startDate,
       endDate,
       status,
+      priceByNight,
+      numberOfPeople,
+      totalPrice,
     };
 
     const newReservation =
       await models.ProfileHotel.create(reservationHotelData);
-    return successResponse(
-      res,
-      "Réservation créée avec succès",
-      newReservation
-    );
+
+    return res.status(201).json({
+      success: true,
+      message: "Réservation créée avec succès",
+      data: {
+        id: newReservation.id,
+        profileId: newReservation.profileId,
+        hotelId: newReservation.hotelId,
+        startDate: newReservation.startDate,
+        endDate: newReservation.endDate,
+        status: newReservation.status,
+        priceByNight: newReservation.priceByNight,
+        numberOfPeople: newReservation.numberOfPeople,
+        totalPrice: newReservation.totalPrice,
+        hotel: {
+          name: hotel.name,
+        },
+      },
+    });
   } catch (err) {
     return res.status(500).json({
       message: "Erreur interne du serveur.",

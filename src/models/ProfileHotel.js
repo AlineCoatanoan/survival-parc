@@ -1,5 +1,4 @@
-// models/ProfileHotel.js
-import { Model, DataTypes, Op } from "sequelize";
+import { Model, DataTypes } from "sequelize";
 
 export class ProfileHotel extends Model {
   static init(sequelize) {
@@ -37,6 +36,18 @@ export class ProfileHotel extends Model {
           type: DataTypes.DATE,
           allowNull: false,
         },
+        priceByNight: {
+          type: DataTypes.DECIMAL(10, 2),
+          allowNull: false,
+        },
+        numberOfPeople: {
+          type: DataTypes.INTEGER,
+          allowNull: false,
+        },
+        totalPrice: {
+          type: DataTypes.DECIMAL(10, 2),
+          allowNull: false,
+        },
         status: {
           type: DataTypes.STRING,
           allowNull: false,
@@ -48,28 +59,18 @@ export class ProfileHotel extends Model {
         modelName: "ProfileHotel",
         tableName: "profile_hotels", // Le nom de la table dans la base de données
         timestamps: true,
-        indexes: [
-          {
-            unique: true,
-            fields: ["profileId", "hotelId", "startDate"],
-          },
-          // Vous pouvez aussi indexer sur (profileId, hotelId, startDate, endDate) si vous préférez
-        ],
       }
     );
   }
 
   static associate(models) {
-    // Correctement associer Profile -> ProfileHotel
     this.belongsTo(models.Profile, {
-      foreignKey: "profileId", // La clé étrangère dans ProfileHotel
-      as: "profile", // Alias pour l'association vers Profile
+      foreignKey: "profileId",
+      as: "profile",
     });
-
-    // Correctement associer Hotel -> ProfileHotel
     this.belongsTo(models.Hotel, {
-      foreignKey: "hotelId", // La clé étrangère dans ProfileHotel
-      as: "hotel", // Alias pour l'association vers Hotel
+      foreignKey: "hotelId",
+      as: "hotel",
     });
   }
 }
