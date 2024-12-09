@@ -5,7 +5,7 @@ import { models } from "../models/index.js";
 
 const { ProfileHotel, Hotel, Profile } = models;
 
-/**Récupère toutes les réservations avec les informations des hôtels incluses. */
+// Récupère toutes les réservations avec les informations des hôtels.
 export const getAllReservationsHotels = ctrlWrapper(async (req, res) => {
   const reservations = await ProfileHotel.findAll({
     include: [
@@ -34,7 +34,7 @@ export const getAllReservationsHotels = ctrlWrapper(async (req, res) => {
   res.json(reservations);
 });
 
-/**Récupère toutes les réservations d'un `profileId` avec les informations des hôtels incluses.*/
+//Récupère toutes les réservations d'un `profileId` avec les informations des hôtels.
 export const getReservationAllHotelsById = ctrlWrapper(async (req, res) => {
   const { profileId } = req.params;
 
@@ -64,7 +64,7 @@ export const getReservationAllHotelsById = ctrlWrapper(async (req, res) => {
   return successResponse(res, reservations);
 });
 
-//**créer une réservation d'hotel */
+//créer une réservation d'hotel
 export const createReservationHotel = async (req, res) => {
   const {
     profileId,
@@ -144,7 +144,7 @@ export const createReservationHotel = async (req, res) => {
   }
 };
 
-//**delete une réservation d'hotel */
+//delete une réservation d'hotel
 export const deleteReservationHotel = async (req, res) => {
   const { id } = req.params; // Extraction de l'ID de la réservation d'hôtel depuis l'URL
   const { profileId, hotelId } = req.body; // Extraction des IDs du profil et de l'hôtel depuis le corps de la requête

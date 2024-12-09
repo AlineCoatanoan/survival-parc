@@ -1,5 +1,6 @@
 import { successResponse } from "../middlewares/success.js";
 import { error404 } from "../middlewares/error404.js";
+import { badRequestResponse } from "../middlewares/errors.js";
 import { ctrlWrapper } from "../../utils/ctrlWrapper.js";
 import { models } from "../models/index.js";
 import { Op } from "sequelize";
@@ -12,7 +13,7 @@ const { User } = models;
 // get all users
 export const getAllUsers = ctrlWrapper(async (req, res) => {
   const users = await User.findAll({
-    attributes: ["id", "email", "role", "createdAt", "updatedAt"], // Spécifiez les attributs à récupérer
+    attributes: ["id", "email", "role", "createdAt", "updatedAt"],
   });
   successResponse(res, "Users fetched successfully", users);
 });
@@ -21,7 +22,7 @@ export const getAllUsers = ctrlWrapper(async (req, res) => {
 export const getAllAdmins = ctrlWrapper(async (req, res) => {
   const admins = await User.findAll({
     where: { role: "admin" },
-    attributes: ["id", "email", "role", "createdAt", "updatedAt"], // Spécifiez les attributs à récupérer
+    attributes: ["id", "email", "role", "createdAt", "updatedAt"],
   });
   successResponse(res, "Admins fetched successfully", admins);
 });
@@ -32,7 +33,6 @@ export const getUserId = ctrlWrapper(async (req, res) => {
     attributes: ["id", "email", "role", "createdAt", "updatedAt"],
   });
   if (!user) return error404(res, "User not found");
-
   successResponse(res, "User fetched successfully", user);
 });
 
@@ -40,10 +40,16 @@ export const getUserId = ctrlWrapper(async (req, res) => {
 export const createUser = ctrlWrapper(async (req, res) => {
   const { firstName, lastName, email, password, role } = req.body;
 
-  // Hachage du mot de passe
-  const hashedPassword = await bcrypt.hash(password, 10);
+  if (!firstName || !lastName || !email || !password) {
+    return badRequestResponse(res, "All fields are required");
+  }
 
-  // Création de l'utilisateur
+  const existingUser = await User.findOne({ where: { email } });
+  if (existingUser) {
+    return badRequestResponse(res, "Email already in use");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({
     firstName,
     lastName,
@@ -52,23 +58,17 @@ export const createUser = ctrlWrapper(async (req, res) => {
     role,
   });
 
-  // Génération du token
   const token = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
   );
 
-  // Définir un cookie sécurisé contenant le token
   setCookies(res, token);
-
-  // Envoie une réponse au client
   successResponse(res, "User created successfully", {
     id: user.id,
     email: user.email,
     role: user.role,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
   });
 });
 
@@ -81,7 +81,12 @@ export const updateUser = ctrlWrapper(async (req, res) => {
   if (!user) return error404(res, "User not found");
 
   if (email) user.email = email;
-  if (password) user.password = await bcrypt.hash(password, 10);
+  if (password) {
+    if (password.trim() === "") {
+      return badRequestResponse(res, "Password cannot be empty");
+    }
+    user.password = await bcrypt.hash(password, 10);
+  }
   if (role) user.role = role;
 
   await user.save();
@@ -89,8 +94,6 @@ export const updateUser = ctrlWrapper(async (req, res) => {
     id: user.id,
     email: user.email,
     role: user.role,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
   });
 });
 
@@ -109,10 +112,8 @@ export const searchUser = ctrlWrapper(async (req, res) => {
   const { name } = req.query;
 
   const users = await User.findAll({
-    where: {
-      [Op.or]: [{ email: { [Op.iLike]: `%${name}%` } }],
-    },
-    attributes: ["id", "email", "role", "createdAt", "updatedAt"],
+    where: { [Op.or]: [{ email: { [Op.iLike]: `%${name}%` } }] },
+    attributes: ["id", "email", "role", "createdAt", "updatedAt", "firstName"],
     order: [["firstName", "ASC"]],
   });
   successResponse(res, "Users fetched successfully", users);

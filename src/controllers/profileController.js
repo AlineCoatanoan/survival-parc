@@ -8,7 +8,8 @@ const { Profile, User } = models;
 // get all profiles
 export const getProfiles = ctrlWrapper(async (req, res) => {
   const profiles = await Profile.findAll();
-  if (!profiles) return error404(res, "Profiles not found");
+  if (!profiles || profiles.length === 0)
+    return error404(res, "Profiles not found");
   successResponse(res, "Profiles retrieved successfully", profiles);
 });
 
@@ -36,7 +37,7 @@ export const createProfile = ctrlWrapper(async (req, res) => {
   const { firstName, lastName, birthDate, phone, address, postalCode, city } =
     req.body;
 
-  // Vérification de la validité de birthDate au format 'YYYY-MM-DD'
+  // Vérification de la validité de birthDate
   if (!birthDate || !/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
     return res.status(400).json({
       message:
@@ -61,26 +62,40 @@ export const createProfile = ctrlWrapper(async (req, res) => {
     return res.status(404).json({ message: "Utilisateur non trouvé" });
   }
 
-  const profile = await Profile.create({
-    userId,
-    firstName,
-    lastName,
-    birthDate: birthDateWithoutTime, // Utilisez la date sans heure ici
-    phone,
-    address,
-    postalCode,
-    city,
-  });
+  try {
+    const profile = await Profile.create({
+      userId,
+      firstName,
+      lastName,
+      birthDate: birthDateWithoutTime, // Utilisez la date sans heure
+      phone,
+      address,
+      postalCode,
+      city,
+    });
 
-  return res.status(201).json({
-    message: "Profil créé avec succès",
-    data: profile,
-  });
+    return res.status(201).json({
+      message: "Profil créé avec succès",
+      data: {
+        id: profile.id, // Retourne seulement les informations non sensibles
+        userId: profile.userId,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        // Ne retourne pas d'autres données sensibles ici (email, adresse, etc.)
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Erreur lors de la création du profil",
+      error: error.message,
+    });
+  }
 });
 
 // update profile
 export const updateProfile = ctrlWrapper(async (req, res) => {
-  const { firstName, lastName, email, phoneNumber, address } = req.body;
+  const { firstName, lastName, email, phone, address } = req.body;
   const { userId } = req.params; // Utiliser userId dans l'URL
 
   const profile = await Profile.findOne({ where: { userId } }); // Trouver le profil par userId
@@ -91,27 +106,42 @@ export const updateProfile = ctrlWrapper(async (req, res) => {
   // Mettre à jour les champs si les valeurs sont fournies dans la requête
   if (firstName) profile.firstName = firstName;
   if (lastName) profile.lastName = lastName;
-  if (email) profile.email = email;
-  if (phoneNumber) profile.phoneNumber = phoneNumber;
+  if (email) profile.email = email; // Si tu veux gérer l'email, tu peux l'ajouter
+  if (phone) profile.phone = phone; // Corrigé pour utiliser 'phone'
   if (address) profile.address = address;
 
-  // Sauvegarder les changements
-  await profile.save();
-
-  // Retourner une réponse de succès
-  successResponse(res, "Profile updated successfully", profile);
+  try {
+    // Sauvegarder les changements
+    await profile.save();
+    // Retourner une réponse de succès
+    successResponse(res, "Profile updated successfully", profile);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Erreur lors de la mise à jour du profil",
+      error: error.message,
+    });
+  }
 });
 
-// delete profile with user authentication check
+// delete profile
 export const deleteProfile = ctrlWrapper(async (req, res) => {
-  const { userId } = req.params; // Utilisez userId au lieu de id
+  const { userId } = req.params;
 
   const profile = await Profile.findOne({ where: { userId } });
   if (!profile) {
     return res.status(404).json({ message: "Profile not found" });
   }
 
-  // Supprimer le profil
-  await profile.destroy();
-  successResponse(res, "Profile deleted successfully");
+  try {
+    // Supprimer le profil
+    await profile.destroy();
+    successResponse(res, "Profile deleted successfully");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Erreur lors de la suppression du profil",
+      error: error.message,
+    });
+  }
 });

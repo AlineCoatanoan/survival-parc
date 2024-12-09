@@ -24,7 +24,7 @@ export const getReservationsByProfileId = ctrlWrapper(async (req, res) => {
   successResponse(res, "Réservations récupérées avec succès", reservations);
 });
 
-// create reservation (linked to userId)
+// create reservation
 export const createReservation = ctrlWrapper(async (req, res) => {
   const { startDate, endDate, nights, person, price, profileId, hotelId } =
     req.body;
@@ -73,7 +73,7 @@ export const createReservation = ctrlWrapper(async (req, res) => {
   }
 });
 
-// update reservation (only if it belongs to userId)
+// update reservation
 export const updateReservation = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const { startDate, endDate, person, price, userId } = req.body;
@@ -91,7 +91,7 @@ export const updateReservation = ctrlWrapper(async (req, res) => {
   successResponse(res, "Réservation mise à jour avec succès", reservation);
 });
 
-// delete reservation (only if it belongs to userId)
+// delete reservation
 export const deleteReservation = ctrlWrapper(async (req, res) => {
   const { id } = req.params; // ID de la réservation à supprimer
   const { profileId } = req.body; // Récupération de l'ID du profil depuis le corps de la requête
@@ -104,7 +104,7 @@ export const deleteReservation = ctrlWrapper(async (req, res) => {
   }
 
   try {
-    // Vérification si la réservation existe pour cet utilisateur et ce profil
+    // Vérification si la réservation existe pour ce profil
     const reservation = await models.Reservation.findOne({
       where: { id, profileId },
     });
@@ -143,7 +143,7 @@ export const searchReservation = ctrlWrapper(async (req, res) => {
   successResponse(res, "Réservations récupérées avec succès", reservations);
 });
 
-// Helper function to calculate nights if not provided
+// exemple de calcule le nombre de nuits entre deux dates données
 function calculateNights(startDate, endDate) {
   const start = new Date(startDate);
   const end = new Date(endDate);

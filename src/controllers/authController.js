@@ -13,7 +13,7 @@ const { User } = models;
 export const login = ctrlWrapper(async (req, res) => {
   const { email, password } = req.body;
 
-  // Recherche l'utilisateur par email
+  // Recherche l'utilisateur par mail
   const user = await User.findOne({ where: { email } });
   if (!user) {
     return error404(res, "User not found");
@@ -32,10 +32,10 @@ export const login = ctrlWrapper(async (req, res) => {
     console.log("User logged in: ", user.id);
   }
 
-  // Génère un token JWT pour l'utilisateur
+  // Génère un token pour l'utilisateur
   const token = generateToken(user);
 
-  // Sauvegarde le token dans la base de données pour l'utilisateur
+  // Sauvegarde le token dans la bdd pour le user
   user.token = token;
   await user.save();
 
@@ -50,11 +50,11 @@ export const login = ctrlWrapper(async (req, res) => {
 export const logout = ctrlWrapper(async (req, res) => {
   const { id } = req.body;
 
-  // Recherche l'utilisateur par son ID
+  // Recherche le user par son ID
   const user = await User.findByPk(id);
   if (!user) return error404(res, "User not found");
 
-  // Supprime le token de l'utilisateur pour déconnecter
+  // Supprime le token du user pour déconnecter
   user.token = null;
   await user.save();
 
