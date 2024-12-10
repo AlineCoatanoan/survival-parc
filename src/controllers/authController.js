@@ -16,7 +16,7 @@ export const login = ctrlWrapper(async (req, res) => {
   // Recherche l'utilisateur par mail
   const user = await User.findOne({ where: { email } });
   if (!user) {
-    return error404(res, "User not found");
+    return error404(req, res, "User not found");
   }
 
   // Vérifie le mot de passe
