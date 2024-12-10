@@ -95,25 +95,69 @@ export const createProfile = ctrlWrapper(async (req, res) => {
 
 // update profile
 export const updateProfile = ctrlWrapper(async (req, res) => {
-  const { firstName, lastName, email, phone, address } = req.body;
-  const { userId } = req.params; // Utiliser userId dans l'URL
+  // Récupération des champs envoyés dans la requête
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    address,
+    birthDate,
+    postalCode,
+    city,
+  } = req.body;
+  const { userId } = req.params; // UserId passé dans les paramètres de l'URL
 
-  const profile = await Profile.findOne({ where: { userId } }); // Trouver le profil par userId
+  const profile = await Profile.findOne({ where: { userId } });
   if (!profile) {
     return error404(res, "Profile not found");
   }
 
-  // Mettre à jour les champs si les valeurs sont fournies dans la requête
-  if (firstName) profile.firstName = firstName;
-  if (lastName) profile.lastName = lastName;
-  if (email) profile.email = email; // Si tu veux gérer l'email, tu peux l'ajouter
-  if (phone) profile.phone = phone; // Corrigé pour utiliser 'phone'
-  if (address) profile.address = address;
+  // Flag pour savoir si des modifications ont été effectuées
+  let isUpdated = false;
+
+  // Vérification et mise à jour des champs un par un
+  if (firstName && profile.firstName !== firstName) {
+    profile.firstName = firstName;
+    isUpdated = true;
+  }
+  if (lastName && profile.lastName !== lastName) {
+    profile.lastName = lastName;
+    isUpdated = true;
+  }
+  if (email && profile.email !== email) {
+    profile.email = email;
+    isUpdated = true;
+  }
+  if (phone && profile.phone !== phone) {
+    profile.phone = phone;
+    isUpdated = true;
+  }
+  if (address && profile.address !== address) {
+    profile.address = address;
+    isUpdated = true;
+  }
+  if (birthDate && profile.birthDate !== birthDate) {
+    profile.birthDate = birthDate;
+    isUpdated = true;
+  }
+  if (postalCode && profile.postalCode !== postalCode) {
+    profile.postalCode = postalCode;
+    isUpdated = true;
+  }
+  if (city && profile.city !== city) {
+    profile.city = city;
+    isUpdated = true;
+  }
+
+  // Si aucune donnée n'a été modifiée
+  if (!isUpdated) {
+    return successResponse(res, "Aucune modification à enregistrer", profile);
+  }
 
   try {
-    // Sauvegarder les changements
+    // Sauvegarder uniquement si des modifications ont été effectuées
     await profile.save();
-    // Retourner une réponse de succès
     successResponse(res, "Profile updated successfully", profile);
   } catch (error) {
     console.error(error);
