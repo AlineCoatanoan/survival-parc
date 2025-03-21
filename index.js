@@ -32,7 +32,7 @@ app.use(cookieParser());
 // Middlewares Cors
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://survival-parc-five.vercel.app"],
+    origin: ["http://localhost:5173"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -81,7 +81,7 @@ sequelize
     // Démarrer le serveur
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
-      console.log(`Server listening at http://localhost:${port}/api`);
+      console.log(`Server listening at http://localhost:${port}`);
     });
   })
   .catch((error) => {
